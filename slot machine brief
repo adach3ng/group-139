@@ -1,0 +1,101 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <map>
+#include <cstdlib>
+#include <ctime>
+
+std::vector<std::string> symbols = {"🍒", "🍋", "🍊", "🍑", "🔔", "🍫", "7️⃣"};  // Cherry, Lemon, Orange, Plum, Bell, Bar, Seven
+
+std::vector<std::string> spinReels() {
+    std::vector<std::string> reels;
+    for (int i = 0; i < 3; ++i) {
+        int index = rand() % symbols.size();
+        reels.push_back(symbols[index]);
+    }
+    return reels;
+}
+
+int checkWinningCombination(const std::vector<std::string>& reels) {
+    // Define payouts for each winning combination
+    std::map<std::vector<std::string>, int> payouts = {
+        {{"🍒", "🍒", "🍒"}, 10},
+        {{"🍋", "🍋", "🍋"}, 5},
+        {{"🍊", "🍊", "🍊"}, 4},
+        {{"🍑", "🍑", "🍑"}, 3},
+        {{"🔔", "🔔", "🔔"}, 20},
+        {{"🍫", "🍫", "🍫"}, 50},
+        {{"🍒", "🍒", "🍋"}, 2},
+        {{"🍋", "🍋", "🍊"}, 2},
+        {{"🍊", "🍊", "🍑"}, 2},
+        {{"🍑", "🍑", "🔔"}, 2},
+        {{"🔔", "🔔", "🍫"}, 10},
+        {{"🍒", "🍒", "🍊"}, 2},
+        // Additional combinations for easier wins
+        {{"🍒", "🍋", "🍒"}, 2},
+        {{"🍒", "🍊", "🍒"}, 2},
+        {{"🍋", "🍒", "🍋"}, 2},
+        {{"🍋", "🍑", "🍋"}, 2},
+        {{"🍊", "🍒", "🍊"}, 2},
+        {{"🍊", "🔔", "🍊"}, 2},
+        {{"🍑", "🍒", "🍑"}, 2},
+        {{"🍑", "🍫", "🍑"}, 2},
+        {{"🔔", "🍒", "🔔"}, 5},
+        {{"🔔", "🍋", "🔔"}, 5},
+        {{"🍫", "🍒", "🍫"}, 10},
+        {{"🍫", "🍋", "🍫"}, 10},
+        {{"7️⃣", "7️⃣", "7️⃣"}, 1000000}  // Jackpot 
+    };
+
+    auto it = payouts.find(reels);
+    if (it != payouts.end()) {
+        return it->second;
+    }
+    return 0;
+}
+
+int main() {
+    srand(static_cast<unsigned int>(time(0)));  // random number generator
+
+    int balance = 100;  // Starting balance
+    int betAmount = 10;  // Bet amount per spin
+
+    std::cout << "Welcome to the slot machine!" << std::endl;
+    std::cout << "Starting balance: " << balance << std::endl;
+
+    while (balance >= betAmount) {
+        std::cout << "Press Enter to spin the reels...";
+        std::cin.get();
+
+        // Spin the reels
+        std::vector<std::string> reels = spinReels();
+        std::cout << "Reels: ";
+        for (const auto& reel : reels) {
+            std::cout << reel << " ";
+        }
+        std::cout << std::endl;
+
+        // Check for winning combination
+        int winnings = checkWinningCombination(reels);
+        if (winnings > 0) {
+            if (winnings == 1000000) {
+                std::cout << "JACKPOTTTT! You won 1 million dollars!" << std::endl;
+            } else {
+                std::cout << "You won! " << winnings << std::endl;
+            }
+            balance += winnings;
+        } else {
+            std::cout << "No win." << std::endl;
+            balance -= betAmount;
+        }
+
+        std::cout << "Current balance: " << balance << std::endl;
+
+        if (balance < betAmount) {
+            std::cout << "Not enough balance to continue. Better luck next time :))" << std::endl;
+            break;
+        }
+    }
+
+    return 0;
+}
