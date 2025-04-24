@@ -55,7 +55,7 @@ int checkWinningCombination(const std::vector<std::string>& reels) {
 }
 
 int main() {
-    srand(static_cast<unsigned int>(time(0)));  // random number generator
+    srand(static_cast<unsigned int>(time(0)));  
 
     int balance = 100;  // Starting balance
     int betAmount = 10;  // Bet amount per spin
@@ -67,7 +67,7 @@ int main() {
         std::cout << "Press Enter to spin the reels...";
         std::cin.get();
 
-        // Spin the reels
+        
         std::vector<std::string> reels = spinReels();
         std::cout << "Reels: ";
         for (const auto& reel : reels) {
@@ -75,7 +75,7 @@ int main() {
         }
         std::cout << std::endl;
 
-        // Check for winning combination
+        
         int winnings = checkWinningCombination(reels);
         if (winnings > 0) {
             if (winnings == 1000000) {
