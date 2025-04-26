@@ -4,6 +4,7 @@
 #include <map>
 #include <cstdlib>
 #include <ctime>
+#include "bet_system.h"
 
 std::vector<std::string> symbols = {"🍒", "🍋", "🍊", "🍑", "🔔", "🍫", "7️⃣"};  // Cherry, Lemon, Orange, Plum, Bell, Bar, Seven
 
@@ -56,6 +57,7 @@ int checkWinningCombination(const std::vector<std::string>& reels) {
 
 int main() {
     srand(static_cast<unsigned int>(time(0)));  
+    BetSystem betSystem;
 
     int balance = 100;  // Starting balance
     int betAmount = 10;  // Bet amount per spin
