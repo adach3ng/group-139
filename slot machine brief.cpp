@@ -56,45 +56,62 @@ int checkWinningCombination(const std::vector<std::string>& reels) {
 }
 
 int main() {
-    srand(static_cast<unsigned int>(time(0)));  
-    BetSystem betSystem;
+    srand(static_cast<unsigned int>(time(0)));
+    BetSystem betSystem(10);
+    int balance = 100;
 
-    int balance = 100;  // Starting balance
-    int betAmount = 10;  // Bet amount per spin
+    std::cout << "🎰 Welcome to the Enhanced Slot Machine! 🎰\n";
+    betSystem.showBetHelp();
 
-    std::cout << "Welcome to the slot machine!" << std::endl;
-    std::cout << "Starting balance: " << balance << std::endl;
-
-    while (balance >= betAmount) {
-        std::cout << "Press Enter to spin the reels...";
-        std::cin.get();
-
+    while (true) {
+        std::cout << "\nBalance: $" << balance << std::endl;
         
+        int amount;
+        std::cout << "Enter bet amount (0 to quit): ";
+        std::cin >> amount;
+
+        if (std::cin.fail() || amount < 0) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input! Please enter a positive number.\n";
+            continue;
+        }
+
+        if (amount == 0) {
+            std::cout << "Cash out with $" << balance << ". Goodbye!\n";
+            break;
+        }
+
+        if (!betSystem.placeBet(balance, amount)) {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;
+        }
+
+        // Successful bet placed
         std::vector<std::string> reels = spinReels();
-        std::cout << "Reels: ";
+        std::cout << "\nSpinning: ";
         for (const auto& reel : reels) {
             std::cout << reel << " ";
         }
         std::cout << std::endl;
 
-        
-        int winnings = checkWinningCombination(reels);
-        if (winnings > 0) {
-            if (winnings == 1000000) {
-                std::cout << "JACKPOTTTT! You won 1 million dollars!" << std::endl;
-            } else {
-                std::cout << "You won! " << winnings << std::endl;
+        int baseWin = checkWinningCombination(reels);
+        if (baseWin > 0) {
+            int payout = betSystem.calculatePayout(baseWin);
+            balance += payout;
+            std::cout << "WIN! Base: $" << baseWin 
+                      << " × " << betSystem.getMultiplier() 
+                      << " → Total: $" << payout << "!\n";
+            
+            if (baseWin == 1000000) {
+                std::cout << "💰 JACKPOT!!! MILLIONAIRE STATUS ACHIEVED! 💰\n";
             }
-            balance += winnings;
         } else {
-            std::cout << "No win." << std::endl;
-            balance -= betAmount;
+            std::cout << "No winning combination. Try again!\n";
         }
 
-        std::cout << "Current balance: " << balance << std::endl;
-
-        if (balance < betAmount) {
-            std::cout << "Not enough balance to continue. Better luck next time :))" << std::endl;
+        if (balance < betSystem.getBaseBet()) {
+            std::cout << "\n⚠️ Insufficient funds for minimum bet. Game Over! ⚠️\n";
             break;
         }
     }
