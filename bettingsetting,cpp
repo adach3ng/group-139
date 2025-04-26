@@ -1,0 +1,48 @@
+// main.cpp
+#include <iostream>
+#include <vector>
+#include <string>
+#include <map>
+#include <cstdlib>
+#include <ctime>
+#include "bet_system.h" // 包含新头文件
+
+// [原有符号和函数声明保持不变...]
+
+int main() {
+    srand(static_cast<unsigned int>(time(0)));
+    BetSystem betSystem;  
+    int balance = 1000;   
+
+    std::cout << "Welcome to JUNGLE!" << std::endl;
+    betSystem.showBetHelp();
+    
+    while (true) {
+        int currentBet = 0;
+        std::cout << "\nCurrent Money: " << balance << std::endl;
+        std::cout << "Please enter betting amount (0 to exit): ";
+        
+        if (!(std::cin >> currentBet)) {
+            std::cin.clear();
+            std::cin.ignore();
+            std::cout << "Invalid Input!" << std::endl;
+            continue;
+        }
+
+        if (currentBet == 0) break;
+
+        if (!betSystem.placeBet(balance, currentBet)) continue;
+
+        int basePayout = checkWinningCombination(reels);
+        if (basePayout > 0) {
+            int actualPayout = betSystem.calculatePayout(basePayout);
+            balance += actualPayout;
+            
+            std::cout << "Basic Payout: " << basePayout 
+                      << " × " << betSystem.getMultiplier() 
+                      << "Times = Actural Payout: " << actualPayout << std::endl;
+        }
+
+    }
+    return 0;
+}
