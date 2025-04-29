@@ -61,9 +61,9 @@ int checkWinningCombination(const std::vector<std::string>& reels) {
 std::vector<std::string> sadMessages = {
     "😢 So close!",
     "😞 Better luck next time!",
-    "💪 Keep it up!",
+    "💪 Almost there, don't give up!",
     "🍀 Luck wasn't on your side!",
-    "💀 Womp womp.",
+    "🤡 Womp womp.",
     "Nice try diddy!",
     "😐 Bro typed 'spin' and got humbled."
 };
@@ -148,8 +148,9 @@ int main() {
                 std::cout << "💰 JACKPOT!!! MILLIONAIRE STATUS ACHIEVED! 💰\n";
             }
         } else {
-            std::cout << "No winning combination. Try again!\n";
+            
             std::cout << sadMessages[rand() % sadMessages.size()] << "\n";
+            std::cout << "No winning combination. Try again!\n";
         }
 
         if (balance < betSystem.getBaseBet()) {
