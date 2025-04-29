@@ -41,3 +41,7 @@ void BetSystem::showBetHelp() const {
               << ">100:   2.0x 以上\n"
               << "Each bet must not be less than the base amount" << baseBet << std::endl;
 }
+
+int BetSystem::getBaseBet() const {
+    return baseBet;
+}
