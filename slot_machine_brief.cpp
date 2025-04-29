@@ -4,15 +4,18 @@
 #include <map>
 #include <cstdlib>
 #include <ctime>
+#include <chrono>
+#include <thread>
 #include "bet_system.h"
+#include "difficulty_system.h"
 
 std::vector<std::string> symbols = {"🍒", "🍋", "🍊", "🍑", "🔔", "🍫", "7️⃣"};  // Cherry, Lemon, Orange, Plum, Bell, Bar, Seven
 
-std::vector<std::string> spinReels() {
+std::vector<std::string> spinReels(const std::vector<std::string>& symbolSet) {
     std::vector<std::string> reels;
     for (int i = 0; i < 3; ++i) {
-        int index = rand() % symbols.size();
-        reels.push_back(symbols[index]);
+        int index = rand() % symbolSet.size();
+        reels.push_back(symbolSet[index]);
     }
     return reels;
 }
@@ -55,10 +58,40 @@ int checkWinningCombination(const std::vector<std::string>& reels) {
     return 0;
 }
 
+std::vector<std::string> sadMessages = {
+    "😢 So close!",
+    "😞 Better luck next time!",
+    "💪 Keep it up!",
+    "🍀 Luck wasn't on your side!",
+    "💀 Womp womp.",
+    "Nice try diddy!",
+    "😐 Bro typed 'spin' and got humbled."
+};
+
 int main() {
     srand(static_cast<unsigned int>(time(0)));
     BetSystem betSystem(10);
+
+    DifficultySystem difficulty;
+
+    int choice;
+    std::cout << "Select Difficulty:\n"
+              << "1. Easy   (More wins, higher payout)\n"
+              << "2. Medium (Balanced)\n"
+              << "3. Hard   (Low chance, tough odds)\n"
+              << "Enter choice [1-3]: ";
+    std::cin >> choice;
+    difficulty.selectDifficulty(choice);
+
+    float difficultyModifier = difficulty.getModifier();
+    std::string difficultyName = difficulty.getDifficultyName();
+    std::vector<std::string> symbolSet = getSymbolSetForDifficulty(choice);
+
     int balance = 100;
+
+    std::cout << "\n🎮 Difficulty Selected: " << difficultyName << "\n";
+    std::cout << "🏦 Starting Balance: $" << balance << "\n";
+    std::cout << "💸 Payout Modifier: x" << difficultyModifier << "\n";
 
     std::cout << "🎰 Welcome to the Enhanced Slot Machine! 🎰\n";
     betSystem.showBetHelp();
@@ -88,19 +121,27 @@ int main() {
         }
 
         // Successful bet placed
-        std::vector<std::string> reels = spinReels();
-        std::cout << "\nSpinning: ";
+        std::vector<std::string> reels = spinReels(symbolSet);
+        for (int i = 1; i < 4; i++){
+            std::cout << "\nSpinning";
+            for (int j = 0; j < i; j++) {
+                std::cout << ".";
+            std::this_thread::sleep_for(std::chrono::milliseconds(300));
+            }
+        }
+        std::cout << std::endl;
         for (const auto& reel : reels) {
-            std::cout << reel << " ";
+            std::cout << reel << "| ";
         }
         std::cout << std::endl;
 
         int baseWin = checkWinningCombination(reels);
         if (baseWin > 0) {
-            int payout = betSystem.calculatePayout(baseWin);
+            int payout = static_cast<int>(betSystem.calculatePayout(baseWin) * difficultyModifier);
             balance += payout;
             std::cout << "WIN! Base: $" << baseWin 
                       << " × " << betSystem.getMultiplier() 
+                      << " × Difficulty: " << difficultyModifier 
                       << " → Total: $" << payout << "!\n";
             
             if (baseWin == 1000000) {
@@ -108,6 +149,7 @@ int main() {
             }
         } else {
             std::cout << "No winning combination. Try again!\n";
+            std::cout << sadMessages[rand() % sadMessages.size()] << "\n";
         }
 
         if (balance < betSystem.getBaseBet()) {
