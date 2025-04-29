@@ -1,5 +1,5 @@
 // bettingsetting.cpp
-#include "bettingsetting.h"
+#include "bet_system.h"
 
 BetSystem::BetSystem(int defaultBet) : baseBet(defaultBet), multiplier(1.0f) {}
 
