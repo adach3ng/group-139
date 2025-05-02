@@ -119,7 +119,7 @@ int level(int &win){ //changed from one loop to function, remember to test
                       << " × Difficulty: " << difficultyModifier 
                       << " → Total: $" << payout << "!\n";
             
-            if (baseWin == 1000000) {
+            if (baseWin == 1000000*win) {
                 std::cout << "💰 JACKPOT!!! MILLIONAIRE STATUS ACHIEVED! 💰\n";
                 win++;
                 std::cout << "Enter Yes/No to continue to second level";
