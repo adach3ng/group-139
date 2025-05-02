@@ -10,6 +10,8 @@
 #include "difficulty_system.h"
 
 std::vector<std::string> symbols = {"🍒", "🍋", "🍊", "🍑", "🔔", "🍫", "7️⃣"};  // Cherry, Lemon, Orange, Plum, Bell, Bar, Seven
+BetSystem betSystem(10); //debug: defining systems at start instead of in main
+DifficultySystem difficulty;
 
 std::vector<std::string> spinReels(const std::vector<std::string>& symbolSet) {
     std::vector<std::string> reels;
@@ -70,7 +72,8 @@ std::vector<std::string> sadMessages = {
 
 int win = 0; //win++ if user wins
 int chance = 1; // chance = 0 then gg
-int level(int &win){ //changed from one loop to function, remember to test
+int balance = 100; // intitial balance (debug note: moved this ahead so balance is defined in level)
+void level(int &win){ //changed from one loop to function, remember to test
     while (true) {
         std::cout << "\nBalance: $" << balance << std::endl;
         
@@ -96,7 +99,7 @@ int level(int &win){ //changed from one loop to function, remember to test
         }
 
         // Successful bet placed
-        std::vector<std::string> reels = spinReels(symbolSet);
+        std::vector<std::string> reels = spinReels(symbols);
         for (int i = 1; i < 4; i++){
             std::cout << "\nSpinning";
             for (int j = 0; j < i; j++) {
@@ -112,6 +115,7 @@ int level(int &win){ //changed from one loop to function, remember to test
 
         int baseWin = checkWinningCombination(reels);
         if (baseWin > 0) {
+            float difficultyModifier = difficulty.getModifier(); //debug: defined difficultyModifier
             int payout = static_cast<int>(betSystem.calculatePayout(baseWin) * difficultyModifier);
             balance += payout;
             std::cout << "WIN! Base: $" << baseWin 
@@ -138,8 +142,8 @@ int level(int &win){ //changed from one loop to function, remember to test
             std::cout << "No winning combination. Try again!\n";
         }
 
-        if (balance < betSystem.getBaseBet()) {
-            std::cout << "\n⚠️ Insufficient funds for minimum bet. Game Over! ⚠️\n";
+        if (balance < betSystem.getBaseBet()) { //debug added getBaseBet function
+            std::cout << "\n⚠️\ Insufficient funds for minimum bet. Game Over! ⚠️\n";
             chance = 0;
             break;
         }
@@ -147,9 +151,7 @@ int level(int &win){ //changed from one loop to function, remember to test
 }
 int main() {
     srand(static_cast<unsigned int>(time(0)));
-    BetSystem betSystem(10);
-
-    DifficultySystem difficulty;
+    std::cout<<"start";
 
     int choice;
     std::cout << "Select Difficulty:\n"
@@ -164,8 +166,6 @@ int main() {
     std::string difficultyName = difficulty.getDifficultyName();
     std::vector<std::string> symbolSet = getSymbolSetForDifficulty(choice);
 
-    int balance = 100;
-
     std::cout << "\n🎮 Difficulty Selected: " << difficultyName << "\n";
     std::cout << "🏦 Starting Balance: $" << balance << "\n";
     std::cout << "💸 Payout Modifier: x" << difficultyModifier << "\n";
@@ -176,7 +176,7 @@ int main() {
         level(win);
     }
     if (chance == 0){
-        cout << "Good game, your win streak was" << win;
+        std::cout << "Good game, your win streak was" << win; //debug: added std
     }
     return 0;
 }

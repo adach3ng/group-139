@@ -38,7 +38,10 @@ void BetSystem::showBetHelp() const {
               << "The betting amount affects the bonus multiplier ratio:\n"
               << "10-50:  1.0x - 1.5x\n"
               << "51-100: 1.5x - 2.0x\n"
-              << ">100:   2.0x 以上\n"
+              << ">100:   2.0x\n"
               << "Each bet must not be less than the base amount" << baseBet << std::endl;
 }
 
+int BetSystem::getBaseBet() const {
+    return baseBet;
+}

@@ -21,4 +21,7 @@ public:
     
     // show the instruction
     void showBetHelp() const;
+
+    //return value of base bet inputted by player
+    int getBaseBet() const;
 };
