@@ -68,34 +68,9 @@ std::vector<std::string> sadMessages = {
     "😐 Bro typed 'spin' and got humbled."
 };
 
-int main() {
-    srand(static_cast<unsigned int>(time(0)));
-    BetSystem betSystem(10);
-
-    DifficultySystem difficulty;
-
-    int choice;
-    std::cout << "Select Difficulty:\n"
-              << "1. Easy   (More wins, higher payout)\n"
-              << "2. Medium (Balanced)\n"
-              << "3. Hard   (Low chance, tough odds)\n"
-              << "Enter choice [1-3]: ";
-    std::cin >> choice;
-    difficulty.selectDifficulty(choice);
-
-    float difficultyModifier = difficulty.getModifier();
-    std::string difficultyName = difficulty.getDifficultyName();
-    std::vector<std::string> symbolSet = getSymbolSetForDifficulty(choice);
-
-    int balance = 100;
-
-    std::cout << "\n🎮 Difficulty Selected: " << difficultyName << "\n";
-    std::cout << "🏦 Starting Balance: $" << balance << "\n";
-    std::cout << "💸 Payout Modifier: x" << difficultyModifier << "\n";
-
-    std::cout << "🎰 Welcome to the Enhanced Slot Machine! 🎰\n";
-    betSystem.showBetHelp();
-
+int win = 0; //win++ if user wins
+int chance = 1; // chance = 0 then gg
+int level(int &win){ //changed from one loop to function, remember to test
     while (true) {
         std::cout << "\nBalance: $" << balance << std::endl;
         
@@ -146,6 +121,15 @@ int main() {
             
             if (baseWin == 1000000) {
                 std::cout << "💰 JACKPOT!!! MILLIONAIRE STATUS ACHIEVED! 💰\n";
+                win++;
+                std::cout << "Enter Yes/No to continue to second level";
+                std::string response;;
+                std::cin >> response;
+                if (response == "Yes" || response == "yes") {
+                    std::cout << "You are now a millionaire! But you got robbed when entering the next level, good luck!\n";
+                } else {
+                    std::cout << "You chose not to continue. Goodbye!\n";
+                    break;
             }
         } else {
             
@@ -155,9 +139,41 @@ int main() {
 
         if (balance < betSystem.getBaseBet()) {
             std::cout << "\n⚠️ Insufficient funds for minimum bet. Game Over! ⚠️\n";
+            chance = 0;
             break;
         }
     }
+}
+int main() {
+    srand(static_cast<unsigned int>(time(0)));
+    BetSystem betSystem(10);
 
+    DifficultySystem difficulty;
+
+    int choice;
+    std::cout << "Select Difficulty:\n"
+              << "1. Easy   (More wins, higher payout)\n"
+              << "2. Medium (Balanced)\n"
+              << "3. Hard   (Low chance, tough odds)\n"
+              << "Enter choice [1-3]: ";
+    std::cin >> choice;
+    difficulty.selectDifficulty(choice);
+
+    float difficultyModifier = difficulty.getModifier();
+    std::string difficultyName = difficulty.getDifficultyName();
+    std::vector<std::string> symbolSet = getSymbolSetForDifficulty(choice);
+
+    int balance = 100;
+
+    std::cout << "\n🎮 Difficulty Selected: " << difficultyName << "\n";
+    std::cout << "🏦 Starting Balance: $" << balance << "\n";
+    std::cout << "💸 Payout Modifier: x" << difficultyModifier << "\n";
+
+    std::cout << "🎰 Welcome to the Enhanced Slot Machine! 🎰\n";
+    betSystem.showBetHelp();
+    while(chance!=0){
+        level(win);
+    if (chance == 0){
+        cout << "Good game, your win streak was" << win;
     return 0;
 }
