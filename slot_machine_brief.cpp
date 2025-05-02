@@ -73,7 +73,7 @@ std::vector<std::string> sadMessages = {
 int win = 0; //win++ if user wins
 int chance = 1; // chance = 0 then gg
 int balance = 100; // intitial balance (debug note: moved this ahead so balance is defined in level)
-void level(int &win){ //changed from one loop to function, remember to test
+void level(int &win, std::vector<std::string> symbolSet){ //changed from one loop to function, remember to test
     while (true) {
         std::cout << "\nBalance: $" << balance << std::endl;
         
@@ -99,7 +99,7 @@ void level(int &win){ //changed from one loop to function, remember to test
         }
 
         // Successful bet placed
-        std::vector<std::string> reels = spinReels(symbols);
+        std::vector<std::string> reels = spinReels(symbolSet);
         for (int i = 1; i < 4; i++){
             std::cout << "\nSpinning";
             for (int j = 0; j < i; j++) {
@@ -143,7 +143,7 @@ void level(int &win){ //changed from one loop to function, remember to test
         }
 
         if (balance < betSystem.getBaseBet()) { //debug added getBaseBet function
-            std::cout << "\n⚠️\ Insufficient funds for minimum bet. Game Over! ⚠️\n";
+            std::cout << "\n⚠️ Insufficient funds for minimum bet. Game Over! ⚠️\n";
             chance = 0;
             break;
         }
@@ -173,7 +173,7 @@ int main() {
     std::cout << "🎰 Welcome to the Enhanced Slot Machine! 🎰\n";
     betSystem.showBetHelp();
     while(chance!=0){
-        level(win);
+        level(win, symbolSet); //debug: a quick patch for symbolSet
     }
     if (chance == 0){
         std::cout << "Good game, your win streak was" << win; //debug: added std
