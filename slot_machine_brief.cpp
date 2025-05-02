@@ -73,7 +73,7 @@ std::vector<std::string> sadMessages = {
 int win = 0; //win++ if user wins
 int chance = 1; // chance = 0 then gg
 int balance = 100; // intitial balance (debug note: moved this ahead so balance is defined in level)
-void level(int &win, std::vector<std::string> symbolSet){ //changed from one loop to function, remember to test
+void level(int &win, std::vector<std::string> &symbolSet){ //changed from one loop to function, remember to test
     while (true) {
         std::cout << "\nBalance: $" << balance << std::endl;
         
@@ -90,6 +90,8 @@ void level(int &win, std::vector<std::string> symbolSet){ //changed from one loo
 
         if (amount == 0) {
             std::cout << "Cash out with $" << balance << ". Goodbye!\n";
+            std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+            chance = 0;
             break;
         }
 
@@ -104,7 +106,7 @@ void level(int &win, std::vector<std::string> symbolSet){ //changed from one loo
             std::cout << "\nSpinning";
             for (int j = 0; j < i; j++) {
                 std::cout << ".";
-            std::this_thread::sleep_for(std::chrono::milliseconds(300));
+            std::this_thread::sleep_for(std::chrono::milliseconds(100)); //(originally 300)
             }
         }
         std::cout << std::endl;
@@ -143,10 +145,55 @@ void level(int &win, std::vector<std::string> symbolSet){ //changed from one loo
         }
 
         if (balance < betSystem.getBaseBet()) { //debug added getBaseBet function
+            std::this_thread::sleep_for(std::chrono::milliseconds(1500));
             std::cout << "\n⚠️ Insufficient funds for minimum bet. Game Over! ⚠️\n";
+            std::this_thread::sleep_for(std::chrono::milliseconds(3000));
             chance = 0;
             break;
         }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(500)); //upgrade phase (originally 1500)
+        /*note for game balancing. Increase the number of occurance in symbolSet to increase the odds of a symbol.
+        Easy mode is actually hard rn since the symbolSet is just one of each symbol in normal while in easy it is
+        three of each symbol, this diluting the pool for upgrades*/
+
+        /*additional ideas: if you played dnd you probably know this, rolling with advantage is something we can 
+        implement easily. Have an upgrade that gives the player a chance to roll with advantage, that is they roll
+        twice and get the better result of the two rolls*/
+
+        std::cout << "upgrade time!" << std::endl;
+        int upgrade_choice;
+        std::cin >> upgrade_choice;
+
+        if (upgrade_choice >= 1 && upgrade_choice <= 3)
+        {
+            std::cout << "good choice" << std::endl;
+            for (int i = 0; i < 3; i++)
+            {
+                symbolSet.push_back(symbols[upgrade_choice-1]);
+            }
+        }
+
+        if (upgrade_choice == 4 || upgrade_choice == 3)
+        {
+            std::cout << "good choice" << std::endl;
+            for (int i = 0; i < 2; i++)
+            {
+                symbolSet.push_back(symbols[upgrade_choice-1]);
+            }
+        }
+
+        if (upgrade_choice == 6)
+        {
+            std::cout << "a gambling man, huh?" << std::endl;
+            symbolSet.push_back(symbols[upgrade_choice-1]);
+        }
+
+/*        for(int i = 0; i < symbolSet.size(); i++) //for seeing the symbolSet
+        {
+            std::cout << symbolSet[i] << std::endl;
+        }
+        std::cout << std::endl;*/
     }
 }
 int main() {
