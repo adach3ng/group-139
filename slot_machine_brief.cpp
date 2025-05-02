@@ -130,8 +130,9 @@ int level(int &win){ //changed from one loop to function, remember to test
                 } else {
                     std::cout << "You chose not to continue. Goodbye!\n";
                     break;
-            }
-        } else {
+                }
+            } 
+        }else {
             
             std::cout << sadMessages[rand() % sadMessages.size()] << "\n";
             std::cout << "No winning combination. Try again!\n";
@@ -173,7 +174,9 @@ int main() {
     betSystem.showBetHelp();
     while(chance!=0){
         level(win);
+    }
     if (chance == 0){
         cout << "Good game, your win streak was" << win;
+    }
     return 0;
 }
