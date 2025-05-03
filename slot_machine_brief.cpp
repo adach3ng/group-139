@@ -199,6 +199,7 @@ void level(std::vector<std::string> &symbolSet){
             if (winStreak < win)
             {
                 winStreak++;
+                std::cout<< "current win streak: " << winStreak << endl;
             }
         }else {
             std::cout << sadMessages[rand() % sadMessages.size()] << "\n";
