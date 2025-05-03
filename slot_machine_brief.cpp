@@ -328,7 +328,7 @@ void level(std::vector<std::string> &symbolSet){
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
         }
         loops++;
-    }
+    }}
 }
 int main() {
     srand(static_cast<unsigned int>(time(0)));
