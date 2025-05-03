@@ -209,7 +209,7 @@ void level(std::vector<std::string> &symbolSet){
                 winStreak++;
             }
 
-            if (baseWin >= 800000) {
+            if (baseWin >= 1000000) {
                 std::cout << "💰 JACKPOT!!! MILLIONAIRE STATUS ACHIEVED! 💰\n";
                 std::cout << "Enter Yes/No to continue to second level ";
                 std::string response;;
