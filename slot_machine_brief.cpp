@@ -32,11 +32,11 @@ std::map<std::vector<std::string>, int> payouts = {
     {{"🔔", "🍒", "🍒"}, 50},
     //🍋+🍊
     {{"🍋", "🍊", "🍋"}, 100},
-    {{"🍋", "🍋", "🍊"}, 30},
-    {{"🍊", "🍋", "🍋"}, 30},
-    {{"🍊", "🍊", "🍋"}, 50},
-    {{"🍊", "🍋", "🍊"}, 50},
-    {{"🍋", "🍊", "🍊"}, 50},
+    {{"🍋", "🍋", "🍊"}, 40},
+    {{"🍊", "🍋", "🍋"}, 40},
+    {{"🍊", "🍊", "🍋"}, 60},
+    {{"🍊", "🍋", "🍊"}, 60},
+    {{"🍋", "🍊", "🍊"}, 60},
     //🍑+🍫
     {{"🍑", "🍫", "🍫"}, 150},
     {{"🍫", "🍑", "🍫"}, 70},
@@ -112,7 +112,7 @@ double timerMult = 1;
 void level(std::vector<std::string> &symbolSet){
     while (true) {
         int p1 = rand() % 20;
-        if (p1 < loops-5 && p1 % 2 == 0) //rob the player with increasing probability that caps at 50%
+        if (p1 < loops-5 && p1 % 3 == 0) //rob the player with increasing probability that caps at 33%
         {
             std::cout << "\nTIME TO PAY YOUR GAMBLING TAXES!" << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
@@ -171,7 +171,7 @@ void level(std::vector<std::string> &symbolSet){
         int rerollProb = rand() % 20;
         while (luck >= rerollProb) {
             std::vector<std::string> rerollReels = spinReels(symbolSet);
-            std::cout << "rigged\n";
+            std::cout << "rigged!\n";
             for (const auto& reel : reels) { //checking rigged reels
                 std::cout << reel << "| ";
             }
