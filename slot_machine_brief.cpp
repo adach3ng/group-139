@@ -107,6 +107,7 @@ int balance = 200; // intitial balance (debug note: moved this ahead so balance 
 float payoutModifier = 1.0f;
 float taxModifier = 1.0f;
 int luck = 0;
+double timerMult = 1;
 void level(int &win, std::vector<std::string> &symbolSet){
     while (true) {
         std::cout << luck;
@@ -160,7 +161,7 @@ void level(int &win, std::vector<std::string> &symbolSet){
             std::cout << "\nSpinning";
             for (int j = 0; j < i; j++) {
                 std::cout << ".";
-            std::this_thread::sleep_for(std::chrono::milliseconds(300-loops*2));
+            std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(300*timerMult)));
             }
         }
         int baseWin = checkWinningCombination(reels);
@@ -224,29 +225,29 @@ void level(int &win, std::vector<std::string> &symbolSet){
             std::cout << "No winning combination. Try again!\n";
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(1500-loops*10)); //entering upgrade phase (originally 1500)
+        std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(1500*timerMult))); //entering upgrade phase (originally 1500)
 
         std::cout << "Upgrade time!" << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(1500-loops*10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(1500*timerMult)));
         std::cout << "\nChoices: (Type in corresponding number, everything costs $20)" << std::endl; //display available upgrades
-        std::this_thread::sleep_for(std::chrono::milliseconds(500-loops*3));
+        std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(500*timerMult)));
 
         for (int i = 0; i < symbols.size(); i++) //symbol upgrades
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100-loops));
+            std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(100*timerMult)));
             std::cout << i+1 << ": " << symbols[i] << std::endl;
         }
 
         //special upgrades
-        std::this_thread::sleep_for(std::chrono::milliseconds(100-loops));
+        std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(100*timerMult)));
         std::cout << "8: 📈" << std::endl;
         if (luck < 20)
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100-loops));
+            std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(100*timerMult)));
             std::cout << "9: 🍀" << std::endl;
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100-loops)); //get player's choice of upgrade
+        std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(100*timerMult))); //get player's choice of upgrade
         std::cout << "\nWhat is your choice?" << std::endl;
         int upgradeChoice;
         std::cin >> upgradeChoice;
@@ -320,14 +321,13 @@ int main() {
     srand(static_cast<unsigned int>(time(0)));
     std::cout<<"start";
 
-    std::cout << R"(
-    ┌───────────────────── -ˋˏ ∵✉︎∴ ˎˊ- ─────────────────────┐
-          -ˏˋ⋆ Welcome to the Slot Machine Game 🎰!⋆ˊˎ-
-      Test your luck and see if you can hit the jackpot! 
-             Spin the reels and let the fun begin! 
-    └───────────────────── -ˋˏ ∵✉︎∴ ˎˊ- ─────────────────────┘⠀
-    )" << std::endl;
-
+    std::cout << "\n\nInput waiting time (0-100): ";
+    std::cin >> timerMult;
+    timerMult /= 100;
+    if (timerMult == 0)
+    {
+        std::cout << "in a hurry?\n";
+    }
 
     int choice;
     std::cout << "Select Difficulty:\n"
@@ -348,10 +348,10 @@ int main() {
     std::cout << "🏦 Starting Balance: $" << balance << "\n";
     std::cout << "💰 Payout Modifier: x" << payoutModifier << "\n";
     std::cout << "💸 Tax Modifier: x" << taxModifier << "\n";
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(2000*timerMult)));
 
     std::cout << "🎰 Welcome to the Enhanced Slot Machine! 🎰\n";
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(2000*timerMult)));
 
     betSystem.showBetHelp();
     //while(chance!=0){
