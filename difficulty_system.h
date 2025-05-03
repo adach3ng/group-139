@@ -5,38 +5,50 @@
 
 class DifficultySystem {
 private:
-    float modifier;
+    int startingBalance;
+    float payoutModifier;
+    float taxModifier;
     std::string difficultyName;
 
 public:
     enum DifficultyLevel { EASY = 1, MEDIUM = 2, HARD = 3 };
 
-    DifficultySystem() : modifier(1.0f), difficultyName("🟡 Medium") {}
+    DifficultySystem() : payoutModifier(1.0f), difficultyName("🟡 Medium") {}
 
     void selectDifficulty(int choice) {
         switch (choice) {
             case EASY:
-                modifier = 1.2f;
+                startingBalance = 200;
+                payoutModifier = 1.2f;
+                taxModifier = 0.8f;
                 difficultyName = "🟢 Easy";
                 break;
             case MEDIUM:
-                modifier = 1.0f;
+                startingBalance = 150;
+                payoutModifier = 1.0f;
+                taxModifier = 1.0f;
                 difficultyName = "🟡 Medium";
                 break;
             case HARD:
-                modifier = 0.8f;
+                startingBalance = 120;
+                payoutModifier = 0.8f;
+                taxModifier = 1.1f;
                 difficultyName = "🔴 Hard";
                 break;
             default:
                 std::cout << "Invalid choice. Defaulting to Medium.\n";
-                modifier = 1.0f;
+                startingBalance = 150;
+                payoutModifier = 1.0f;
+                taxModifier = 1.0f;
                 difficultyName = "🟡 Medium";
                 break;
         }
     }
 
-    float getModifier() const { return modifier; }
     std::string getDifficultyName() const { return difficultyName; }
+    int getStartingBalance() const { return startingBalance; }
+    float getPayoutModifier() const { return payoutModifier; }
+    float getTaxModifier() const { return taxModifier; }
 };
 
 

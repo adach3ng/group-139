@@ -12,6 +12,66 @@
 std::vector<std::string> symbols = {"🍒", "🍋", "🍊", "🍑", "🔔", "🍫", "7️⃣"};  // Cherry, Lemon, Orange, Plum, Bell, Bar, Seven
 BetSystem betSystem(10); //debug: defining systems at start instead of in main
 DifficultySystem difficulty;
+std::map<std::vector<std::string>, int> payouts = {
+    //full board type
+    {{"🍒", "🍒", "🍒"}, 30},
+    {{"🍋", "🍋", "🍋"}, 30},
+    {{"🍊", "🍊", "🍊"}, 50},
+    {{"🍑", "🍑", "🍑"}, 50},
+    {{"🔔", "🔔", "🔔"}, 80},
+    {{"🍫", "🍫", "🍫"}, 80},
+    {{"7️⃣", "7️⃣", "7️⃣"}, 1000000}, // Jackpot 
+    //proposed synergy 🍒+🔔, 🍋+🍊, 🍑+🍫 (basic+rare, basic+uncommon, uncommon+rare)
+    //(Note 7️⃣ has no synergy, so when the player start upgrading 7️⃣, they would disrupt their other synergy)
+    //🍒+🔔
+    {{"🔔", "🍒", "🔔"}, 200},
+    {{"🔔", "🔔", "🍒"}, 80},
+    {{"🍒", "🔔", "🔔"}, 80},
+    {{"🍒", "🍒", "🔔"}, 50},
+    {{"🍒", "🔔", "🍒"}, 50},
+    {{"🔔", "🍒", "🍒"}, 50},
+    //🍋+🍊
+    {{"🍋", "🍊", "🍋"}, 100},
+    {{"🍋", "🍋", "🍊"}, 30},
+    {{"🍊", "🍋", "🍋"}, 30},
+    {{"🍊", "🍊", "🍋"}, 50},
+    {{"🍊", "🍋", "🍊"}, 50},
+    {{"🍋", "🍊", "🍊"}, 50},
+    //🍑+🍫
+    {{"🍑", "🍫", "🍫"}, 150},
+    {{"🍫", "🍑", "🍫"}, 70},
+    {{"🍫", "🍫", "🍑"}, 70},
+    {{"🍫", "🍑", "🍑"}, 70},
+    {{"🍑", "🍫", "🍑"}, 70},
+    {{"🍑", "🍑", "🍫"}, 70},
+      
+};
+/*{{"🍒", "🍒", "🍒"}, 10}, og values
+    {{"🍋", "🍋", "🍋"}, 5},
+    {{"🍊", "🍊", "🍊"}, 4},
+    {{"🍑", "🍑", "🍑"}, 3},
+    {{"🔔", "🔔", "🔔"}, 20},
+    {{"🍫", "🍫", "🍫"}, 50},
+    {{"🍒", "🍒", "🍋"}, 2},
+    {{"🍋", "🍋", "🍊"}, 2},
+    {{"🍊", "🍊", "🍑"}, 2},
+    {{"🍑", "🍑", "🔔"}, 2},
+    {{"🔔", "🔔", "🍫"}, 10},
+    {{"🍒", "🍒", "🍊"}, 2},
+    // Additional combinations for easier wins
+    {{"🍒", "🍋", "🍒"}, 2},
+    {{"🍒", "🍊", "🍒"}, 2},
+    {{"🍋", "🍒", "🍋"}, 2},
+    {{"🍋", "🍑", "🍋"}, 2},
+    {{"🍊", "🍒", "🍊"}, 2},
+    {{"🍊", "🔔", "🍊"}, 2},
+    {{"🍑", "🍒", "🍑"}, 2},
+    {{"🍑", "🍫", "🍑"}, 2},
+    {{"🔔", "🍒", "🔔"}, 5},
+    {{"🔔", "🍋", "🔔"}, 5},
+    {{"🍫", "🍒", "🍫"}, 10},
+    {{"🍫", "🍋", "🍫"}, 10},
+    {{"7️⃣", "7️⃣", "7️⃣"}, 1000000}  // Jackpot */
 
 std::vector<std::string> spinReels(const std::vector<std::string>& symbolSet) {
     std::vector<std::string> reels;
@@ -23,68 +83,6 @@ std::vector<std::string> spinReels(const std::vector<std::string>& symbolSet) {
 }
 
 int checkWinningCombination(const std::vector<std::string>& reels) {
-    // Define payouts for each winning combination
-    std::map<std::vector<std::string>, int> payouts = {
-        //full board type
-        {{"🍒", "🍒", "🍒"}, 30},
-        {{"🍋", "🍋", "🍋"}, 30},
-        {{"🍊", "🍊", "🍊"}, 50},
-        {{"🍑", "🍑", "🍑"}, 50},
-        {{"🔔", "🔔", "🔔"}, 80},
-        {{"🍫", "🍫", "🍫"}, 80},
-        {{"7️⃣", "7️⃣", "7️⃣"}, 1000000}, // Jackpot 
-        //proposed synergy 🍒+🔔, 🍋+🍊, 🍑+🍫 (basic+rare, basic+uncommon, uncommon+rare)
-        //(Note 7️⃣ has no synergy, so when the player start upgrading 7️⃣, they would disrupt their other synergy)
-        //🍒+🔔
-        {{"🔔", "🍒", "🔔"}, 200},
-        {{"🔔", "🔔", "🍒"}, 80},
-        {{"🍒", "🔔", "🔔"}, 80},
-        {{"🍒", "🍒", "🔔"}, 50},
-        {{"🍒", "🔔", "🍒"}, 50},
-        {{"🔔", "🍒", "🍒"}, 50},
-        //🍋+🍊
-        {{"🍋", "🍊", "🍋"}, 100},
-        {{"🍋", "🍋", "🍊"}, 30},
-        {{"🍊", "🍋", "🍋"}, 30},
-        {{"🍊", "🍊", "🍋"}, 50},
-        {{"🍊", "🍋", "🍊"}, 50},
-        {{"🍋", "🍊", "🍊"}, 50},
-        //🍑+🍫
-        {{"🍑", "🍫", "🍫"}, 150},
-        {{"🍫", "🍑", "🍫"}, 70},
-        {{"🍫", "🍫", "🍑"}, 70},
-        {{"🍫", "🍑", "🍑"}, 70},
-        {{"🍑", "🍫", "🍑"}, 70},
-        {{"🍑", "🍑", "🍫"}, 70},
-          
-    };
-    /*{{"🍒", "🍒", "🍒"}, 10}, og values
-        {{"🍋", "🍋", "🍋"}, 5},
-        {{"🍊", "🍊", "🍊"}, 4},
-        {{"🍑", "🍑", "🍑"}, 3},
-        {{"🔔", "🔔", "🔔"}, 20},
-        {{"🍫", "🍫", "🍫"}, 50},
-        {{"🍒", "🍒", "🍋"}, 2},
-        {{"🍋", "🍋", "🍊"}, 2},
-        {{"🍊", "🍊", "🍑"}, 2},
-        {{"🍑", "🍑", "🔔"}, 2},
-        {{"🔔", "🔔", "🍫"}, 10},
-        {{"🍒", "🍒", "🍊"}, 2},
-        // Additional combinations for easier wins
-        {{"🍒", "🍋", "🍒"}, 2},
-        {{"🍒", "🍊", "🍒"}, 2},
-        {{"🍋", "🍒", "🍋"}, 2},
-        {{"🍋", "🍑", "🍋"}, 2},
-        {{"🍊", "🍒", "🍊"}, 2},
-        {{"🍊", "🔔", "🍊"}, 2},
-        {{"🍑", "🍒", "🍑"}, 2},
-        {{"🍑", "🍫", "🍑"}, 2},
-        {{"🔔", "🍒", "🔔"}, 5},
-        {{"🔔", "🍋", "🔔"}, 5},
-        {{"🍫", "🍒", "🍫"}, 10},
-        {{"🍫", "🍋", "🍫"}, 10},
-        {{"7️⃣", "7️⃣", "7️⃣"}, 1000000}  // Jackpot */
-
     auto it = payouts.find(reels);
     if (it != payouts.end()) {
         return it->second;
@@ -104,17 +102,20 @@ std::vector<std::string> sadMessages = {
 
 int loops = 0; //loop++ per slot machine spin
 int win = 0; //win++ if user wins
-int chance = 1; // chance = 0 then gg
+//int chance = 1; // chance = 0 then gg
 int balance = 200; // intitial balance (debug note: moved this ahead so balance is defined in level)
-void level(int &win, std::vector<std::string> &symbolSet){ //changed from one loop to function, remember to test
+float payoutModifier = 1.0f;
+float taxModifier = 1.0f;
+void level(int &win, std::vector<std::string> &symbolSet){
     while (true) {
         int p1 = rand() % 20;
         if (p1 <= loops-5 && p1 % 2 == 0) //rob the player with increasing probability that caps at 50%
         {
             std::cout << "\nTIME TO PAY YOUR GAMBLING TAXES!" << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
-            balance -= balance * 0.1 + loops;
-            std::cout << "The IRS took away $" << balance * 0.1 + loops << std::endl;
+            int tax = static_cast<int>((balance * 0.1 + loops) * taxModifier);
+            balance -= tax;
+            std::cout << "The IRS took away $" << tax << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
         }
 
@@ -124,7 +125,7 @@ void level(int &win, std::vector<std::string> &symbolSet){ //changed from one lo
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
             std::cout << "\n ⚠️ Insufficient funds for minimum bet. Game Over! ⚠️\n";
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
-            chance = 0;
+            //chance = 0;
             break;
         }
 
@@ -142,7 +143,7 @@ void level(int &win, std::vector<std::string> &symbolSet){ //changed from one lo
         if (amount == 0) {
             std::cout << "Cash out with $" << balance << ". Goodbye!\n";
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
-            chance = 0;
+            //chance = 0;
             break;
         }
 
@@ -168,12 +169,11 @@ void level(int &win, std::vector<std::string> &symbolSet){ //changed from one lo
 
         int baseWin = checkWinningCombination(reels);
         if (baseWin > 0) {
-            float difficultyModifier = difficulty.getModifier(); //debug: defined difficultyModifier
-            int payout = static_cast<int>(betSystem.calculatePayout(baseWin) * difficultyModifier);
+            int payout = static_cast<int>(betSystem.calculatePayout(baseWin) * payoutModifier);
             balance += payout;
             std::cout << "WIN! Base: $" << baseWin 
                       << " × " << betSystem.getMultiplier() 
-                      << " × Difficulty: " << difficultyModifier 
+                      << " × Additional Multiplier: " << payoutModifier 
                       << " → Total: $" << payout << "!\n";
             
             if (baseWin == 1000000*win) {
@@ -195,65 +195,69 @@ void level(int &win, std::vector<std::string> &symbolSet){ //changed from one lo
             std::cout << "No winning combination. Try again!\n";
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(500-loops*3)); //entering upgrade phase (originally 1500)
-        /*note for game balancing. Increase the number of occurance in symbolSet to increase the odds of a symbol.
-        Easy mode is actually hard rn since the symbolSet is just one of each symbol in normal while in easy it is
-        three of each symbol, this diluting the pool for upgrades*/
-
-        /*additional ideas: if you played dnd you probably know this, rolling with advantage is something we can 
-        implement easily. Have an upgrade that gives the player a chance to roll with advantage, that is they roll
-        twice and get the better result of the two rolls*/
+        std::this_thread::sleep_for(std::chrono::milliseconds(1500-loops*10)); //entering upgrade phase (originally 1500)
 
         std::cout << "Upgrade time!" << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(1500-loops*10));
         std::cout << "\nChoices: (Type in corresponding number, everything costs $20)" << std::endl; //display available upgrades
         std::this_thread::sleep_for(std::chrono::milliseconds(500-loops*3));
-        for (int i = 0; i < symbols.size(); i++)
+
+        for (int i = 0; i < symbols.size(); i++) //symbol upgrades
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(100-loops));
             std::cout << i+1 << ": " << symbols[i] << std::endl;
         }
+        //special upgrades
+        std::this_thread::sleep_for(std::chrono::milliseconds(100-loops));
+        std::cout << "8: 📈" << std::endl;
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000-loops*10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100-loops));
         std::cout << "\nWhat is your choice?" << std::endl;
-        int upgrade_choice;
-        std::cin >> upgrade_choice;
+        int upgradeChoice;
+        std::cin >> upgradeChoice;
 
-        if (upgrade_choice == 1 || upgrade_choice == 2) //add four copies of basic
+        if (upgradeChoice == 1 || upgradeChoice == 2) //add four copies of basic
         {
             std::cout << "good choice" << std::endl;
             balance -= 20;
             for (int i = 0; i < 4; i++)
             {
-                symbolSet.push_back(symbols[upgrade_choice-1]);
+                symbolSet.push_back(symbols[upgradeChoice-1]);
             }
         }
 
-        else if (upgrade_choice == 3 || upgrade_choice == 4) //add three copies of uncommon
+        else if (upgradeChoice == 3 || upgradeChoice == 4) //add three copies of uncommon
         {
             std::cout << "good choice" << std::endl;
             balance -= 20;
             for (int i = 0; i < 3; i++)
             {
-                symbolSet.push_back(symbols[upgrade_choice-1]);
+                symbolSet.push_back(symbols[upgradeChoice-1]);
             }
         }
 
-        else if (upgrade_choice == 5 || upgrade_choice == 6) //add two copies of basic
+        else if (upgradeChoice == 5 || upgradeChoice == 6) //add two copies of basic
         {
             std::cout << "good choice" << std::endl;
             balance -= 20;
             for (int i = 0; i < 2; i++)
             {
-                symbolSet.push_back(symbols[upgrade_choice-1]);
+                symbolSet.push_back(symbols[upgradeChoice-1]);
             }
         }
 
-        else if (upgrade_choice == 7) //add one copy of jackpot
+        else if (upgradeChoice == 7) //add one copy of jackpot
         {
             std::cout << "a gambling man, huh?" << std::endl;
             balance -= 20;
-            symbolSet.push_back(symbols[upgrade_choice-1]);
+            symbolSet.push_back(symbols[upgradeChoice-1]);
+        }
+
+        else if (upgradeChoice == 8) //add one copy of jackpot
+        {
+            std::cout << "good investment" << std::endl;
+            balance -= 20;
+            payoutModifier += 0.05;
         }
 
         else
@@ -283,24 +287,28 @@ int main() {
     std::cin >> choice;
     difficulty.selectDifficulty(choice);
 
-    float difficultyModifier = difficulty.getModifier();
+    balance = difficulty.getStartingBalance();
+    payoutModifier = difficulty.getPayoutModifier();
+    taxModifier = difficulty.getTaxModifier();
     std::string difficultyName = difficulty.getDifficultyName();
     std::vector<std::string> symbolSet = getSymbolSetForDifficulty(choice);
 
     std::cout << "\n🎮 Difficulty Selected: " << difficultyName << "\n";
     std::cout << "🏦 Starting Balance: $" << balance << "\n";
-    std::cout << "💸 Payout Modifier: x" << difficultyModifier << "\n";
-    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+    std::cout << "💰 Payout Modifier: x" << payoutModifier << "\n";
+    std::cout << "💸 Tax Modifier: x" << taxModifier << "\n";
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
     std::cout << "🎰 Welcome to the Enhanced Slot Machine! 🎰\n";
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+
     betSystem.showBetHelp();
-    while(chance!=0){
-        level(win, symbolSet); //debug: added symbolSet into level function
-    }
-    if (chance == 0){
-        std::cout << "Good game, your win streak was " << win;
-    }
+    //while(chance!=0){
+    level(win, symbolSet); //debug: added symbolSet into level function
+    //}
+    //if (chance == 0){
+    std::cout << "Good game, your win streak was " << win;
+    //}
     std::this_thread::sleep_for(std::chrono::milliseconds(5000));
     return 0;
 }
