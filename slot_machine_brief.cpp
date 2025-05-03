@@ -100,19 +100,19 @@ std::vector<std::string> sadMessages = {
     "😐 Bro typed 'spin' and got humbled."
 };
 
-int loops = 0; //loop++ per slot machine spin
+int loops = 1; //loop++ per slot machine spin
 int win = 0; //win++ if user wins
 int winStreak = 0;
 //int chance = 1; // chance = 0 then gg
 int balance = 200; // intitial balance (debug note: moved this ahead so balance is defined in level)
 float payoutModifier = 1.0f;
 float taxModifier = 1.0f;
-int luck = 10;
+int luck = 110;
 double timerMult = 1;
-void level(int &win, std::vector<std::string> &symbolSet){
+void level(std::vector<std::string> &symbolSet){
     while (true) {
         int p1 = rand() % 20;
-        if (p1 <= loops-5 && p1 % 2 == 0) //rob the player with increasing probability that caps at 50%
+        if (p1 < loops-5 && p1 % 2 == 0) //rob the player with increasing probability that caps at 50%
         {
             std::cout << "\nTIME TO PAY YOUR GAMBLING TAXES!" << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
@@ -178,6 +178,7 @@ void level(int &win, std::vector<std::string> &symbolSet){
             for (const auto& rerollReels : rerollReels) { 
                 std::cout << rerollReels << "| ";
             }
+            std::cout << "\n";
             if (checkWinningCombination(rerollReels) > baseWin)
             {
                 reels = rerollReels;
@@ -223,9 +224,15 @@ void level(int &win, std::vector<std::string> &symbolSet){
                     break;
                 }
             } 
+            win++;
+            if (winStreak < win)
+            {
+                winStreak++;
+            }
         }else {
             std::cout << sadMessages[rand() % sadMessages.size()] << "\n";
             std::cout << "No winning combination. Try again!\n";
+            win = 0;
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(1500*timerMult))); //entering upgrade phase (originally 1500)
@@ -308,13 +315,17 @@ void level(int &win, std::vector<std::string> &symbolSet){
             std::cout << "you leave the upgrade shop" << std::endl;
         }
 
-        loops++;
-        
-/*        for(int i = 0; i < symbolSet.size(); i++) //for seeing the symbolSet
+        if (loops == 5)
         {
-            std::cout << symbolSet[i] << std::endl;
+            luck -= 100;
         }
-        std::cout << std::endl;*/
+
+        if (loops == 5 || loops % 10 == 0)
+        {
+            std::cout << "You found something...";
+        }
+
+        loops++;
     }
 }
 int main() {
@@ -356,7 +367,7 @@ int main() {
 
     betSystem.showBetHelp();
     //while(chance!=0){
-    level(win, symbolSet);
+    level(symbolSet);
     //}
     //if (chance == 0){
     std::cout << "Good game, your win streak was " << winStreak;
