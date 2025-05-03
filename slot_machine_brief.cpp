@@ -82,6 +82,15 @@ float payoutModifier = 1.0f;
 float taxModifier = 1.0f;
 int luck = 110;
 double timerMult = 1;
+void item1(int &balance){
+    balance+=1000;
+}
+void item2(int &luck){
+    luck+=5
+}
+void item3(int &balance){
+    balance+=100000;
+}
 void level(std::vector<std::string> &symbolSet){
     while (true) {
         std::cout << "\nBalance: $" << balance << std::endl;
@@ -196,6 +205,22 @@ void level(std::vector<std::string> &symbolSet){
                 }
             } 
             win++;
+            if (win % 3 == 0){ //random event per 3 wins
+                int randomnumber;
+                randomnumber = rand() % 11;
+                if (randomnumber < 7){
+                    item1();
+                    std::cout<< "you just got a common item, small pot of gold";
+                }
+                else if (randomnumber >=7 && randomnumber <10){
+                    item2();
+                    std::cout<< "you just got a rare item, four leaf clover!";
+                }
+                else{
+                    item3();
+                    std::cout<< "you just got an epic item, gold rain!";
+                }
+                    
             if (winStreak < win)
             {
                 winStreak++;
