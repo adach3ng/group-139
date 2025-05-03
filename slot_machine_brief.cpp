@@ -107,21 +107,10 @@ int winStreak = 0;
 int balance = 200; // intitial balance (debug note: moved this ahead so balance is defined in level)
 float payoutModifier = 1.0f;
 float taxModifier = 1.0f;
-int luck = 110;
+int luck = 1100;
 double timerMult = 1;
 void level(std::vector<std::string> &symbolSet){
     while (true) {
-        int p1 = rand() % 20;
-        if (p1 < loops-5 && p1 % 3 == 0) //rob the player with increasing probability that caps at 33%
-        {
-            std::cout << "\nTIME TO PAY YOUR GAMBLING TAXES!" << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(1500));
-            int tax = static_cast<int>((balance * 0.1 + loops) * taxModifier);
-            balance -= tax;
-            std::cout << "The IRS took away $" << tax << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(1500));
-        }
-
         std::cout << "\nBalance: $" << balance << std::endl;
         
         if (balance < betSystem.getBaseBet()) { //check if player is broke
@@ -203,13 +192,24 @@ void level(std::vector<std::string> &symbolSet){
         std::cout << std::endl;
 
         if (baseWin > 0) {
-            int payout = static_cast<int>(betSystem.calculatePayout(baseWin) * payoutModifier);
+            double winMult = 1;
+            for (int i = 0; i < win/5; i++)
+            {     
+                winMult *= 1.2;
+            }
+            int payout = static_cast<int>(betSystem.calculatePayout(baseWin) * payoutModifier * winMult);
             balance += payout;
             std::cout << "WIN! Base: $" << baseWin 
                       << " × " << betSystem.getMultiplier() 
-                      << " × Additional Multiplier: " << payoutModifier 
+                      << " × Payout Multiplier: " << payoutModifier 
+                      << " × Win Streak Multiplier: " << winMult
                       << " → Total: $" << payout << "!\n";
             
+            if (win > 1)
+            {
+                std::cout << "Current Win Streak: " << win << std::endl;
+            }
+
             if (baseWin >= 800000) {
                 std::cout << "💰 JACKPOT!!! MILLIONAIRE STATUS ACHIEVED! 💰\n";
                 win++;
@@ -320,11 +320,16 @@ void level(std::vector<std::string> &symbolSet){
             luck -= 100;
         }
 
-        if (loops == 5 || loops % 10 == 0)
+        int p1 = rand() % 20;
+        if (p1 < loops-5 && p1 % 3 == 0) //rob the player with increasing probability that caps at 33%
         {
-            std::cout << "You found something...";
+            std::cout << "\nTIME TO PAY YOUR GAMBLING TAXES!" << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+            int tax = static_cast<int>((balance * 0.1 + loops) * taxModifier);
+            balance -= tax;
+            std::cout << "The IRS took away $" << tax << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(1500));
         }
-
         loops++;
     }
 }
