@@ -368,6 +368,16 @@ int main() {
     std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(2000*timerMult)));
 
     std::cout << "🎰 Welcome to the Enhanced Slot Machine! 🎰\n";
+    std::cout << R"(
+⠀⠀ ⠀⣀⣤⣴⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣤⣤⣀⠀⠀⠀⠀⠀
+⠀⠀⠀ ⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⠀⠀⠀⠀
+⠀⠀⠀⠀⢸⣿⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⣿⡇⠀⠀
+⠀⠀⠀⠀⢸⣿⠀⢸⣿⣿⡇ ⢸⣿⣿⡇ ⢸⣿⣿⡇ ⣿⡇⠀
+⠀⠀⠀⠀⢸⣿⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣿⡇
+⠀⠀⠀⠀⠈⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉
+  ⠀⢀⣴⣿⠟⠛⠛⠛⢿⣿⡿⠛⠛⠛⢿⣿⡿⠛⠛⠛⠛⢿⣦⡀⠀⠀
+    ⣤⣾⣷⣦⣤⣤⣾⣿⣷⣦⣤⣤⣤⣾⣷⣦⣤⣤⣶⣿⣷⣦)";
     std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(2000*timerMult)));
 
     betSystem.showBetHelp();
