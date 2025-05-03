@@ -102,15 +102,15 @@ std::vector<std::string> sadMessages = {
 
 int loops = 0; //loop++ per slot machine spin
 int win = 0; //win++ if user wins
+int winStreak = 0;
 //int chance = 1; // chance = 0 then gg
 int balance = 200; // intitial balance (debug note: moved this ahead so balance is defined in level)
 float payoutModifier = 1.0f;
 float taxModifier = 1.0f;
-int luck = 0;
+int luck = 10;
 double timerMult = 1;
 void level(int &win, std::vector<std::string> &symbolSet){
     while (true) {
-        std::cout << luck;
         int p1 = rand() % 20;
         if (p1 <= loops-5 && p1 % 2 == 0) //rob the player with increasing probability that caps at 50%
         {
@@ -167,8 +167,9 @@ void level(int &win, std::vector<std::string> &symbolSet){
         int baseWin = checkWinningCombination(reels);
 
         //roll with advantage
+        int repeats = 0;
         int rerollProb = rand() % 20;
-        if (luck >= rerollProb) {
+        while (luck >= rerollProb) {
             std::vector<std::string> rerollReels = spinReels(symbolSet);
             std::cout << "rigged\n";
             for (const auto& reel : reels) { //checking rigged reels
@@ -182,6 +183,8 @@ void level(int &win, std::vector<std::string> &symbolSet){
                 reels = rerollReels;
                 baseWin = checkWinningCombination(rerollReels);
             }
+            int addProb = rand() % 20; //additional reroll chance
+            rerollProb += addProb;
         }
 
         //rig jackpot
@@ -216,11 +219,11 @@ void level(int &win, std::vector<std::string> &symbolSet){
                     std::cout << "You are now a millionaire! But you got robbed when entering the next level, good luck!\n";
                 } else {
                     std::cout << "You chose not to continue. Goodbye!\n";
+
                     break;
                 }
             } 
         }else {
-            
             std::cout << sadMessages[rand() % sadMessages.size()] << "\n";
             std::cout << "No winning combination. Try again!\n";
         }
@@ -241,11 +244,8 @@ void level(int &win, std::vector<std::string> &symbolSet){
         //special upgrades
         std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(100*timerMult)));
         std::cout << "8: 📈" << std::endl;
-        if (luck < 20)
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(100*timerMult)));
-            std::cout << "9: 🍀" << std::endl;
-        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(100*timerMult)));
+        std::cout << "9: 🍀" << std::endl;
 
         std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(100*timerMult))); //get player's choice of upgrade
         std::cout << "\nWhat is your choice?" << std::endl;
@@ -296,7 +296,7 @@ void level(int &win, std::vector<std::string> &symbolSet){
             payoutModifier += 0.05;
         }
 
-        else if (upgradeChoice == 9 && luck < 20) //icrease luck for reroll chance
+        else if (upgradeChoice == 9) //icrease luck for reroll chance
         {
             std::cout << "feeling lucky?" << std::endl;
             balance -= 20;
@@ -324,8 +324,9 @@ int main() {
     std::cout << "\n\nInput waiting time (0-100): ";
     std::cin >> timerMult;
     timerMult /= 100;
-    if (timerMult == 0)
+    if (std::cin.fail() || timerMult == 0)
     {
+        timerMult = 0;
         std::cout << "in a hurry?\n";
     }
 
@@ -358,7 +359,7 @@ int main() {
     level(win, symbolSet);
     //}
     //if (chance == 0){
-    std::cout << "Good game, your win streak was " << win;
+    std::cout << "Good game, your win streak was " << winStreak;
     //}
     std::this_thread::sleep_for(std::chrono::milliseconds(5000));
     return 0;
