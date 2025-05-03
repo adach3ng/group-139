@@ -22,17 +22,28 @@ A terminal-based slot machine game with dynamic betting systems, difficulty leve
 
 ## Key Features
 ### 🎚️ Difficulty System
-- **3 Levels**: Easy/Medium/Hard with different:
-  - Starting balances ($200/$150/$120)
-  - Payout modifiers (1.2x/1.0x/0.8x)
-  - Symbol probability distributions
+| Difficulty | Balance | Payout Mod | Tax Mod | Symbol Distribution          |
+|------------|---------|------------|---------|------------------------------|
+| **Easy**   | $200    | 1.2x       | 0.8x    | Balanced odds                |
+| **Medium** | $150    | 1.0x       | 1.0x    | Reduced rare symbols         |
+| **Hard**   | $120    | 0.8x       | 1.1x    | Chaotic 0-4 copies per symbol|
 
 ### 💰 Betting System
-- Dynamic multiplier based on bet amount:
-  - 10-40: 1.0x-1.5x
-  - 41-80: 1.5x-2.0x
-  - >80: 2.0x
-- Minimum bet enforcement
+#### Multiplier Logic
+```c++
+// Core calculation in bet_system.cpp
+if (amount <= 40) {
+    multiplier = 1.0f + ((amount - 10) / 60.0f);  // 10→1.0x, 40→1.5x
+} else if (amount <= 80) {
+    multiplier = 1.5f + ((amount - 40) / 80.0f);  // 40→1.5x, 80→2.0x
+} else {
+    multiplier = 2.0f;  // Flat 2.0x for >80
+}
+
+// Final payout formula
+payout = base_win × multiplier × difficulty_payout_mod
+Example:
+1.5 + (50-40)/80 = 1.625x × Medium (1.0x) → 1.625x total multiplier
 
 ### 🎰 Game Mechanics
 - 7 Unique symbols with 20+ winning combinations
@@ -66,8 +77,24 @@ A terminal-based slot machine game with dynamic betting systems, difficulty leve
 - macOS/Linux terminal
 
 ### Step-by-Step Guide
-1. **Clone Repository**
-   ```bash
-   git clone https://github.com/yourusername/slot-machine-game.git
-   cd slot-machine-game
+1. **Environment Setup**
+    # Linux
+    sudo apt update && sudo apt install build-essential git
+    
+    # macOS
+    brew install git  # Requires Homebrew (https://brew.sh)
+
+2. **Clone & Enter Repository**
+    git clone https://github.com/adach3ng/group-139.git
+    cd slot-machine-game
+
+3. **Compile program**
+    # Universal command with C++11 and threading support
+    g++ -std=c++11 *.cpp -o slot-machine -pthread
+    
+    # Troubleshooting
+    g++-11 -std=c++11 *.cpp -o slot-machine -pthread  # If default compiler fails
+
+4. **Launch game**
+    ./slot-machine
 
