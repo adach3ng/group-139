@@ -41,9 +41,9 @@ if (amount <= 40) {
 }
 
 // Final payout formula
-payout = base_win × multiplier × difficulty_payout_mod
+payout = base_win × difficulty_payout_mod × upgrade_multiplier × winstreak_multiplier
 Example:
-1.5 + (50-40)/80 = 1.625x × Medium (1.0x) → 1.625x total multiplier
+$50-bet (1.5 + (50-40)/80) = 1.625x × Medium (1.0x) × 5-win streak (1.2x) → 1.95x total multiplier
 
 ### 🎰 Game Mechanics
 - 7 Unique symbols with 20+ winning combinations
