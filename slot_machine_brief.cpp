@@ -107,7 +107,7 @@ int winStreak = 0;
 int balance = 200; // intitial balance (debug note: moved this ahead so balance is defined in level)
 float payoutModifier = 1.0f;
 float taxModifier = 1.0f;
-int luck = 1100;
+int luck = 110;
 double timerMult = 1;
 void level(std::vector<std::string> &symbolSet){
     while (true) {
