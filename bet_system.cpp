@@ -16,7 +16,7 @@ bool BetSystem::placeBet(int& balance, int amount) {
 
     // Payout Ratio(Unlinear)
     if (amount <= 40) { //50
-        multiplier = 1.0f + (amount / 80.0f); //100
+        multiplier = 1.0f + (amount - 10 / 60.0f); //100
     } else if (amount <= 80) {
         multiplier = 1.5f + ((amount - 40) / 80.0f); //((amount - 50) / 200.0f)
     } else {
