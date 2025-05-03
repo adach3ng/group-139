@@ -82,7 +82,7 @@ float payoutModifier = 1.0f;
 float taxModifier = 1.0f;
 int luck = 110;
 double timerMult = 1;
-void item1(int &balance){
+void item1(int &balance){ // random items 
     balance+=1000;
 }
 void item2(int &luck){
