@@ -262,7 +262,7 @@ void level(int &win, std::vector<std::string> &symbolSet){ //changed from one lo
         }
 
         loops++;
-        std::cout << symbolSet.size() << "\n";
+        
 /*        for(int i = 0; i < symbolSet.size(); i++) //for seeing the symbolSet
         {
             std::cout << symbolSet[i] << std::endl;
