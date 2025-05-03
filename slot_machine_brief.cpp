@@ -82,6 +82,7 @@ float payoutModifier = 1.0f;
 float taxModifier = 1.0f;
 int luck = 110;
 double timerMult = 1;
+bool showRig = false;
 
 void item1(int &balance){ // random items 
     balance+=500;
@@ -107,6 +108,12 @@ void level(std::vector<std::string> &symbolSet){
         int amount;
         std::cout << "Enter bet amount (0 to quit): ";
         std::cin >> amount;
+
+        if (amount == 777) {
+            std::cout << "MANIFEST DESTINY\n";
+            luck = 77777;
+            continue;;
+        }
 
         if (std::cin.fail() || amount < 0) {
             std::cin.clear();
@@ -140,33 +147,38 @@ void level(std::vector<std::string> &symbolSet){
         //roll with advantage
         int repeats = 0;
         int rerollProb = rand() % 20;
+        std::vector<std::string> jackpot = {"7️⃣", "7️⃣", "7️⃣"};
+        bool riggedJackpot = false;
+
         while (luck >= rerollProb) {
             std::vector<std::string> rerollReels = spinReels(symbolSet);
-            std::cout << "rigged!\n";
-            for (const auto& reel : reels) { //checking rigged reels
-                std::cout << reel << "| ";
+            if (showRig)
+            {
+                std::cout << "rigged!\n";
+                for (const auto& reel : reels) { //checking rigged reels
+                    std::cout << reel << "| ";
+                }
+                for (const auto& rerollReels : rerollReels) { 
+                    std::cout << rerollReels << "| ";
+                }
+                std::cout << "\n";
             }
-            for (const auto& rerollReels : rerollReels) { 
-                std::cout << rerollReels << "| ";
-            }
-            std::cout << "\n";
             if (checkWinningCombination(rerollReels) > baseWin)
             {
                 reels = rerollReels;
                 baseWin = checkWinningCombination(rerollReels);
+                if (reels == jackpot && !riggedJackpot) { //rig jackpot
+                    std::vector<std::string> rerollReels = spinReels(symbolSet);
+                    reels = rerollReels;
+                    baseWin = checkWinningCombination(rerollReels);
+                    riggedJackpot = true;
+                }
             }
             int addProb = rand() % 20; //additional reroll chance
             rerollProb += addProb;
         }
-
-        //rig jackpot
-        std::vector<std::string> jackpot = {"7️⃣", "7️⃣", "7️⃣"};
-        if (reels == jackpot) {
-            std::vector<std::string> rerollReels = spinReels(symbolSet);
-            reels = rerollReels;
-            baseWin = checkWinningCombination(rerollReels);
-        }
-
+        
+        
         std::cout << std::endl;
         for (const auto& reel : reels) { //output reels
             std::cout << reel << "| ";
@@ -199,11 +211,12 @@ void level(std::vector<std::string> &symbolSet){
 
             if (baseWin >= 800000) {
                 std::cout << "💰 JACKPOT!!! MILLIONAIRE STATUS ACHIEVED! 💰\n";
-                std::cout << "Enter Yes/No to continue to second level";
+                std::cout << "Enter Yes/No to continue to second level ";
                 std::string response;;
                 std::cin >> response;
                 if (response == "Yes" || response == "yes") {
-                    std::cout << "You are now a millionaire! But you got robbed when entering the next level, good luck!\n";
+                    std::cout << "You are now a millionaire! But you got robbed by the IRS when entering the next level, good luck!\n";
+                    balance -= 1000000;
                 } else {
                     std::cout << "You chose not to continue. Goodbye!\n";
 
@@ -337,7 +350,7 @@ int main() {
     srand(static_cast<unsigned int>(time(0)));
     std::cout<<"start";
 
-    std::cout << "\n\nInput waiting time (0-100): ";
+    std::cout << "\n\nwaiting time? (0-100): ";
     std::cin >> timerMult;
     timerMult /= 100;
     if (std::cin.fail() || timerMult == 0)
@@ -346,8 +359,17 @@ int main() {
         std::cout << "in a hurry?\n";
     }
 
+    std::string showRigInput;
+    std::cout << "\nshow rigged result? (y/n): ";
+    std::cin >> showRigInput;
+    if (showRigInput == "y" || showRigInput == "Y")
+    {
+        std::cout << "It always has been rigged\n";
+        showRig = true;
+    }
+
     int choice;
-    std::cout << "Select Difficulty:\n"
+    std::cout << "\nSelect Difficulty:\n"
               << "1. Easy   (More wins, higher payout)\n"
               << "2. Medium (Balanced)\n"
               << "3. Hard   (Low chance, tough odds)\n"
@@ -368,17 +390,18 @@ int main() {
     std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(2000*timerMult)));
 
     std::cout << "🎰 Welcome to the Enhanced Slot Machine! 🎰\n";
+    std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(500*timerMult)));
     std::cout << R"(
-⠀⠀ ⠀⣀⣤⣴⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣤⣤⣀⠀⠀⠀⠀⠀
-⠀⠀⠀ ⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⠀⠀⠀⠀
-⠀⠀⠀⠀⢸⣿⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⣿⡇⠀⠀
-⠀⠀⠀⠀⢸⣿⠀⢸⣿⣿⡇ ⢸⣿⣿⡇ ⢸⣿⣿⡇ ⣿⡇⠀
-⠀⠀⠀⠀⢸⣿⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣿⡇
-⠀⠀⠀⠀⠈⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉
-  ⠀⢀⣴⣿⠟⠛⠛⠛⢿⣿⡿⠛⠛⠛⢿⣿⡿⠛⠛⠛⠛⢿⣦⡀⠀⠀
-    ⣤⣾⣷⣦⣤⣤⣾⣿⣷⣦⣤⣤⣤⣾⣷⣦⣤⣤⣶⣿⣷⣦)";
-    std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(2000*timerMult)));
+        ⠀⠀ ⠀⣀⣤⣴⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣤⣤⣀⠀⠀⠀⠀⠀
+        ⠀⠀⠀ ⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⠀⠀⠀⠀
+        ⠀⠀⠀⠀⢸⣿⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⣿⡇⠀⠀
+        ⠀⠀⠀⠀⢸⣿⠀⢸⣿⣿⡇ ⢸⣿⣿⡇ ⢸⣿⣿⡇ ⣿⡇⠀
+        ⠀⠀⠀⠀⢸⣿⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣿⡇
+        ⠀⠀⠀⠀⠈⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉
+          ⠀⢀⣴⣿⠟⠛⠛⠛⢿⣿⡿⠛⠛⠛⢿⣿⡿⠛⠛⠛⠛⢿⣦⡀⠀⠀
+            ⣤⣾⣷⣦⣤⣤⣾⣿⣷⣦⣤⣤⣤⣾⣷⣦⣤⣤⣶⣿⣷⣦)";
+            std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(2000*timerMult)));
 
     betSystem.showBetHelp();
     level(symbolSet);
