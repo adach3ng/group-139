@@ -74,7 +74,7 @@ inline std::vector<std::string> getSymbolSetForDifficulty(int choice) {
             return result;
         case DifficultySystem::HARD: { //chaotic symbol library 
             for (const auto& symbol : base) {
-                int copies = 1 + rand() % 4;  // 1 to 4 copies of each
+                int copies =  rand() % 5;  // 0 to 4 copies of each
                 for (int i = 0; i < copies; ++i)
                     result.push_back(symbol);
             }
