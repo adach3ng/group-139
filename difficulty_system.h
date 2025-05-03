@@ -46,16 +46,23 @@ inline std::vector<std::string> getSymbolSetForDifficulty(int choice) {
     std::vector<std::string> result;
     switch (choice) {
         case DifficultySystem::EASY:
-            for (const auto& symbol : base) {
-                for (int i = 0; i < 3; ++i)
+            for (const auto& symbol : base) { //equal odds
+                for (int i = 0; i < 2; ++i)
                     result.push_back(symbol);
             }
             return result;
-        case DifficultySystem::MEDIUM:
-            return base;
+        case DifficultySystem::MEDIUM: //higher rarity have less odds
+            for (int i = 3; i < 10; i++)
+            {
+                for (int j = 0; j < i/2; j++)
+                {
+                    result.push_back(base[9-i]);
+                }
+            }
+            return result;
         case DifficultySystem::HARD: { //chaotic symbol library 
             for (const auto& symbol : base) {
-                int copies = 1 + rand() % 2;  // 1 or 2 copies
+                int copies = 1 + rand() % 3;  // 1 to 3 copies of each
                 for (int i = 0; i < copies; ++i)
                     result.push_back(symbol);
             }
