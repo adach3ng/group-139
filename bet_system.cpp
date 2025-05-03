@@ -4,6 +4,7 @@
 BetSystem::BetSystem(int defaultBet) : baseBet(defaultBet), multiplier(1.0f) {}
 
 bool BetSystem::placeBet(int& balance, int amount) {
+    //reject bet and return false if bet amount is lower than requirement or higher than available balance
     if (amount < baseBet) {
         std::cout << "Lowest Bet Is: " << baseBet << "!" << std::endl;
         return false;
@@ -35,7 +36,7 @@ float BetSystem::getMultiplier() const {
     return multiplier;
 }
 
-void BetSystem::showBetHelp() const {
+void BetSystem::showBetHelp() const { //show note
     std::cout << "\n---Betting system description---\n"
               << "The betting amount affects the bonus multiplier ratio:\n"
               << "10-40:  1.0x - 1.5x\n"

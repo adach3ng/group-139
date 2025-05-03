@@ -10,17 +10,17 @@
 #include "difficulty_system.h"
 
 std::vector<std::string> symbols = {"🍒", "🍋", "🍊", "🍑", "🔔", "🍫", "7️⃣"};  // Cherry, Lemon, Orange, Plum, Bell, Bar, Seven
-BetSystem betSystem(10);
+BetSystem betSystem(10); //initializing systems
 DifficultySystem difficulty;
-std::map<std::vector<std::string>, int> payouts = {
-    //full board type
+std::map<std::vector<std::string>, int> payouts = { //defining winning boards
+    //full board type win
     {{"🍒", "🍒", "🍒"}, 30},
     {{"🍋", "🍋", "🍋"}, 30},
     {{"🍊", "🍊", "🍊"}, 50},
     {{"🍑", "🍑", "🍑"}, 50},
     {{"🔔", "🔔", "🔔"}, 80},
     {{"🍫", "🍫", "🍫"}, 80},
-    {{"7️⃣", "7️⃣", "7️⃣"}, 1000000}, // Jackpot 
+    {{"7️⃣", "7️⃣", "7️⃣"}, 1000000}, // Jackpot
     //proposed synergy 🍒+🔔, 🍋+🍊, 🍑+🍫 (basic+rare, basic+uncommon, uncommon+rare)
     //(Note 7️⃣ has no synergy, so when the player start upgrading 7️⃣, they would disrupt their other synergy)
     //🍒+🔔
@@ -44,10 +44,10 @@ std::map<std::vector<std::string>, int> payouts = {
     {{"🍫", "🍑", "🍑"}, 70},
     {{"🍑", "🍫", "🍑"}, 70},
     {{"🍑", "🍑", "🍫"}, 70},
-      
 };
 
-std::vector<std::string> spinReels(const std::vector<std::string>& symbolSet) {
+//generate and return a reel with three symbols randomly using odds given by symboSet
+std::vector<std::string> spinReels(const std::vector<std::string>& symbolSet) { 
     std::vector<std::string> reels;
     for (int i = 0; i < 3; ++i) {
         int index = rand() % symbolSet.size();
@@ -56,6 +56,7 @@ std::vector<std::string> spinReels(const std::vector<std::string>& symbolSet) {
     return reels;
 }
 
+//look through payouts to check if one of the keys matches the input reel
 int checkWinningCombination(const std::vector<std::string>& reels) {
     auto it = payouts.find(reels);
     if (it != payouts.end()) {
@@ -64,6 +65,7 @@ int checkWinningCombination(const std::vector<std::string>& reels) {
     return 0;
 }
 
+//Messages printed when no winning combo
 std::vector<std::string> sadMessages = {
     "😢 So close!",
     "😞 Better luck next time!",
@@ -74,15 +76,17 @@ std::vector<std::string> sadMessages = {
     "😐 Bro typed 'spin' and got humbled."
 };
 
+//main game vatiables
 int loops = 1; //loop++ per slot machine spin
-int win = 0; //win++ if user wins
-int winStreak = 0;
-int balance = 200; // intitial balance
-float payoutModifier = 1.0f;
-float taxModifier = 1.0f;
-int luck = 110;
-double timerMult = 1;
-bool showRig = false;
+int win = 0; //win++ if user wins, reset to zero when use loses
+int winStreak = 0; //record max value of win
+int balance = 200; //available balance for player to spend gambling
+float payoutModifier = 1.0f; //a multiplier on payout affected by difficulty and upgrades
+double winMult = 1.0f; //win streak multiplier
+float taxModifier = 1.0f; //a multiplier on tax payment affected by difficulty
+int luck = 110; //determines how rigged the slot machine is, player has base luck of 10 + 100 beginner's luck 
+double timerMult = 1; //multipler of time of pauses in the game
+bool showRig = false; //determin if rerolls made by rigged rolls are shown
 
 void item1(int &balance){ // random items 
     balance+=500;
@@ -94,9 +98,9 @@ void item3(int &balance){
     balance+=5000;
 }
 
-void level(std::vector<std::string> &symbolSet){
+void level(std::vector<std::string> &symbolSet){ //main game loop
     while (true) {
-        std::cout << "\nBalance: $" << balance << std::endl;
+        std::cout << "\nBalance: $" << balance << std::endl; //output balance
         
         if (balance < betSystem.getBaseBet()) { //check if player is broke
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
@@ -105,36 +109,45 @@ void level(std::vector<std::string> &symbolSet){
             break;
         }
 
-        int amount;
+        int amount; //get user's bet amount
         std::cout << "Enter bet amount (0 to quit): ";
         std::cin >> amount;
 
-        if (amount == 777) {
+        //cheats
+        if (amount == 777) { 
             std::cout << "MANIFEST DESTINY\n";
-            luck = 77777;
-            continue;;
+            luck += 77777;
+            continue;
+        }
+        if (amount == -777) {
+            std::cout << "UNMANIFEST DESTINY\n";
+            luck -= 77777;
+            continue;
         }
 
-        if (std::cin.fail() || amount < 0) {
+        //invalid inputs
+        if (std::cin.fail() || amount < 0) { 
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "Invalid input! Please enter a positive number.\n";
             continue;
         }
 
-        if (amount == 0) {
+        //quit game
+        if (amount == 0) { 
             std::cout << "Cash out with $" << balance << ". Goodbye!\n";
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
             break;
         }
 
-        if (!betSystem.placeBet(balance, amount)) {
+        //run placeBet and ignore cin if amount is less that required amount or more than available balance
+        if (!betSystem.placeBet(balance, amount)) { 
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             continue;
         }
 
         // Successful bet placed
-        std::vector<std::string> reels = spinReels(symbolSet);
+        std::vector<std::string> reels = spinReels(symbolSet); //spin the reels
         for (int i = 1; i < 4; i++){
             std::cout << "\nSpinning";
             for (int j = 0; j < i; j++) {
@@ -142,20 +155,20 @@ void level(std::vector<std::string> &symbolSet){
             std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(300*timerMult)));
             }
         }
-        int baseWin = checkWinningCombination(reels);
+        int baseWin = checkWinningCombination(reels); //get the base payout amount
 
-        //roll with advantage
+        //roll with advantage multiple times if lucky enough
         int repeats = 0;
         int rerollProb = rand() % 20;
+        
         std::vector<std::string> jackpot = {"7️⃣", "7️⃣", "7️⃣"};
         bool riggedJackpot = false;
-
         while (luck >= rerollProb) {
             std::vector<std::string> rerollReels = spinReels(symbolSet);
             if (showRig)
             {
                 std::cout << "rigged!\n";
-                for (const auto& reel : reels) { //checking rigged reels
+                for (const auto& reel : reels) { //outputting rigged reels acording to player setting
                     std::cout << reel << "| ";
                 }
                 for (const auto& rerollReels : rerollReels) { 
@@ -163,10 +176,11 @@ void level(std::vector<std::string> &symbolSet){
                 }
                 std::cout << "\n";
             }
-            if (checkWinningCombination(rerollReels) > baseWin)
+            if (checkWinningCombination(rerollReels) > baseWin) //chooses the better outcome of the two reels
             {
                 reels = rerollReels;
                 baseWin = checkWinningCombination(rerollReels);
+
                 if (reels == jackpot && !riggedJackpot) { //rig jackpot
                     std::vector<std::string> rerollReels = spinReels(symbolSet);
                     reels = rerollReels;
@@ -178,19 +192,21 @@ void level(std::vector<std::string> &symbolSet){
             rerollProb += addProb;
         }
         
-        
+        //print out reels
         std::cout << std::endl;
-        for (const auto& reel : reels) { //output reels
+        for (const auto& reel : reels) { 
             std::cout << reel << "| ";
         }
         std::cout << std::endl;
 
-        if (baseWin > 0) {
-            double winMult = 1;
+        if (baseWin > 0) { //when player wins
+            winMult = 1; //win streak multiplier calculation, multiply payout by 1.2 per 5 win streak
             for (int i = 0; i < win/5; i++)
             {     
                 winMult *= 1.2;
             }
+
+            //calculate payout with total multipliers
             int payout = static_cast<int>(betSystem.calculatePayout(baseWin) * payoutModifier * winMult);
             balance += payout;
             std::cout << "WIN! Base: $" << baseWin 
@@ -199,6 +215,7 @@ void level(std::vector<std::string> &symbolSet){
                       << " × Win Streak Multiplier: " << winMult
                       << " → Total: $" << payout << "!\n";
             
+            //increment win streak.
             win++;
             if (win > 1)
             {
@@ -209,6 +226,7 @@ void level(std::vector<std::string> &symbolSet){
                 winStreak++;
             }
 
+            //check if it is a jack pot, special dialogues
             if (baseWin >= 1000000) {
                 std::cout << "💰 JACKPOT!!! MILLIONAIRE STATUS ACHIEVED! 💰\n";
                 std::cout << "Enter Yes/No to continue to second level ";
@@ -219,12 +237,11 @@ void level(std::vector<std::string> &symbolSet){
                     balance -= 1000000;
                 } else {
                     std::cout << "You chose not to continue. Goodbye!\n";
-
                     break;
                 }
             } 
 
-            if (win % 3 == 0) //random event per 3 wins
+            if (win % 3 == 0) //get 1 random item per 3 wins
             { 
                 int randomnumber = rand() % 11;
                 if (randomnumber < 7){
@@ -241,20 +258,22 @@ void level(std::vector<std::string> &symbolSet){
                 }
             }
 
-        }else {
+        }else { //when player loses
             std::cout << sadMessages[rand() % sadMessages.size()] << "\n";
             std::cout << "No winning combination. Try again!\n";
             win = 0;
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(1500*timerMult))); //entering upgrade phase (originally 1500)
-
         std::cout << "Upgrade time!" << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(1500*timerMult)));
-        std::cout << "\nChoices: (Type in corresponding number, everything costs $20)" << std::endl; //display available upgrades
+
+        //display available upgrades
+        std::cout << "\nChoices: (Type in corresponding number, everything costs $20)" << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(500*timerMult)));
 
-        for (int i = 0; i < symbols.size(); i++) //symbol upgrades
+        //symbol upgrades
+        for (int i = 0; i < symbols.size(); i++) 
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(100*timerMult)));
             std::cout << i+1 << ": " << symbols[i] << std::endl;
@@ -265,8 +284,9 @@ void level(std::vector<std::string> &symbolSet){
         std::cout << "8: 📈" << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(100*timerMult)));
         std::cout << "9: 🍀" << std::endl;
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(100*timerMult))); //get player's choice of upgrade
+        std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(100*timerMult))); 
+        
+        //get player's choice of upgrade
         std::cout << "\nWhat is your choice?" << std::endl;
         int upgradeChoice;
         std::cin >> upgradeChoice;
@@ -333,7 +353,7 @@ void level(std::vector<std::string> &symbolSet){
         }
 
         int p1 = rand() % 20;
-        if (p1 < loops-5 && p1 % 3 == 0) //rob the player with increasing probability that caps at 33%
+        if (p1 < loops-5 && p1 % 3 == 0) //robs the player with increasing probability over time that caps at 33%
         {
             std::cout << "\nTIME TO PAY YOUR GAMBLING TAXES!" << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
@@ -350,15 +370,25 @@ int main() {
     srand(static_cast<unsigned int>(time(0)));
     std::cout<<"start";
 
-    std::cout << "\n\nwaiting time? (0-100): ";
+    //game configuration
+    //pause time
+    std::cout << "\n\npause period? (0-100): ";
     std::cin >> timerMult;
-    timerMult /= 100;
-    if (std::cin.fail() || timerMult == 0)
+    if (timerMult > 100)
+    {
+        timerMult = 1;
+    }
+    else if (std::cin.fail() || timerMult == 0)
     {
         timerMult = 0;
         std::cout << "in a hurry?\n";
     }
+    else
+    {
+        timerMult /= 100;
+    }
 
+    //show rigged rolls
     std::string showRigInput;
     std::cout << "\nshow rigged result? (y/n): ";
     std::cin >> showRigInput;
@@ -368,6 +398,7 @@ int main() {
         showRig = true;
     }
 
+    //difficulty
     int choice;
     std::cout << "\nSelect Difficulty:\n"
               << "1. Easy   (More wins, higher payout)\n"
@@ -377,6 +408,7 @@ int main() {
     std::cin >> choice;
     difficulty.selectDifficulty(choice);
 
+    //initialize base on difficulty
     balance = difficulty.getStartingBalance();
     payoutModifier = difficulty.getPayoutModifier();
     taxModifier = difficulty.getTaxModifier();
@@ -390,7 +422,6 @@ int main() {
     std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(2000*timerMult)));
 
     std::cout << "🎰 Welcome to the Enhanced Slot Machine! 🎰\n";
-    std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(500*timerMult)));
     std::cout << R"(
         ⠀⠀ ⠀⣀⣤⣴⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣤⣤⣀⠀⠀⠀⠀⠀
         ⠀⠀⠀ ⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠀⠀⠀⠀⠀
@@ -401,13 +432,11 @@ int main() {
         ⠀⠀⠀⠀⠈⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉
           ⠀⢀⣴⣿⠟⠛⠛⠛⢿⣿⡿⠛⠛⠛⢿⣿⡿⠛⠛⠛⠛⢿⣦⡀⠀⠀
             ⣤⣾⣷⣦⣤⣤⣾⣿⣷⣦⣤⣤⣤⣾⣷⣦⣤⣤⣶⣿⣷⣦)";
-            std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(2000*timerMult)));
+    std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(3000*timerMult)));
 
-    betSystem.showBetHelp();
-    level(symbolSet);
-    std::cout << "Good game, your win streak was " << winStreak;
+    betSystem.showBetHelp(); //show note on how betting system works
+    level(symbolSet); //main game loop
+    std::cout << "Good game, your win streak was " << winStreak; //show highest win streak at end of game
     std::this_thread::sleep_for(std::chrono::milliseconds(5000));
     return 0;
 }
-//swapped position of tax
-//added win streak bonus

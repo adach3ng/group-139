@@ -15,6 +15,7 @@ public:
 
     DifficultySystem() : payoutModifier(1.0f), difficultyName("🟡 Medium") {}
 
+    //initial values for each diffculty level
     void selectDifficulty(int choice) {
         switch (choice) {
             case EASY:
