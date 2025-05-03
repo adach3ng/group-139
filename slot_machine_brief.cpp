@@ -320,6 +320,15 @@ int main() {
     srand(static_cast<unsigned int>(time(0)));
     std::cout<<"start";
 
+    std::cout << R"(
+    ┌───────────────────── -ˋˏ ∵✉︎∴ ˎˊ- ─────────────────────┐
+          -ˏˋ⋆ Welcome to the Slot Machine Game 🎰!⋆ˊˎ-
+      Test your luck and see if you can hit the jackpot! 
+             Spin the reels and let the fun begin! 
+    └───────────────────── -ˋˏ ∵✉︎∴ ˎˊ- ─────────────────────┘⠀
+    )" << std::endl;
+
+
     int choice;
     std::cout << "Select Difficulty:\n"
               << "1. Easy   (More wins, higher payout)\n"
