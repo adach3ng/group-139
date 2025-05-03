@@ -2,11 +2,11 @@
 # Slot Machine Game 🎰
 
 ## Team Members
-Ke Wong 3036389634
-Chan Chun Hin, 3036327442
-Cheng Jia Xi 3036452340
-Zhang Xiaowei 3036389842
-CHEONG LokIan 3036445880
+Ke Wong 3036389634,
+Chan Chun Hin 3036327442,
+Cheng Jia Xi 3036452340,
+Zhang Xiaowei 3036389842,
+CHEONG LokIan 3036445880,
 Qiu Anchenxi 3036094461
 ---
 
@@ -55,7 +55,6 @@ $50-bet (1.5 + (50-40)/80) = 1.625x × Medium (1.0x) × 5-win streak (1.2x) → 
   - Increase luck stat
 
 ### 🕹️ UX Features
-- Animated spinning effects
 - ASCII art interface
 - Randomized failure/success messages
 - Adjustable speed control
