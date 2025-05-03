@@ -86,7 +86,7 @@ void item1(int &balance){ // random items
     balance+=1000;
 }
 void item2(int &luck){
-    luck+=5
+    luck+=5;
 }
 void item3(int &balance){
     balance+=100000;
@@ -209,22 +209,22 @@ void level(std::vector<std::string> &symbolSet){
                 int randomnumber;
                 randomnumber = rand() % 11;
                 if (randomnumber < 7){
-                    item1();
+                    item1(balance);
                     std::cout<< "you just got a common item, small pot of gold";
                 }
                 else if (randomnumber >=7 && randomnumber <10){
-                    item2();
+                    item2(luck);
                     std::cout<< "you just got a rare item, four leaf clover!";
                 }
                 else{
-                    item3();
+                    item3(balance);
                     std::cout<< "you just got an epic item, gold rain!";
                 }
                     
             if (winStreak < win)
             {
                 winStreak++;
-                std::cout<< "current win streak: " << winStreak << endl;
+                std::cout<< "current win streak: " << winStreak << std::endl;
             }
         }else {
             std::cout << sadMessages[rand() % sadMessages.size()] << "\n";
