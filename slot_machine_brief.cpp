@@ -82,15 +82,17 @@ float payoutModifier = 1.0f;
 float taxModifier = 1.0f;
 int luck = 110;
 double timerMult = 1;
+
 void item1(int &balance){ // random items 
-    balance+=1000;
+    balance+=500;
 }
 void item2(int &luck){
     luck+=5;
 }
 void item3(int &balance){
-    balance+=100000;
+    balance+=5000;
 }
+
 void level(std::vector<std::string> &symbolSet){
     while (true) {
         std::cout << "\nBalance: $" << balance << std::endl;
@@ -185,14 +187,18 @@ void level(std::vector<std::string> &symbolSet){
                       << " × Win Streak Multiplier: " << winMult
                       << " → Total: $" << payout << "!\n";
             
+            win++;
             if (win > 1)
             {
                 std::cout << "Current Win Streak: " << win << std::endl;
             }
+            if (winStreak < win)
+            {
+                winStreak++;
+            }
 
             if (baseWin >= 800000) {
                 std::cout << "💰 JACKPOT!!! MILLIONAIRE STATUS ACHIEVED! 💰\n";
-                win++;
                 std::cout << "Enter Yes/No to continue to second level";
                 std::string response;;
                 std::cin >> response;
@@ -204,10 +210,10 @@ void level(std::vector<std::string> &symbolSet){
                     break;
                 }
             } 
-            win++;
-            if (win % 3 == 0){ //random event per 3 wins
-                int randomnumber;
-                randomnumber = rand() % 11;
+
+            if (win % 3 == 0) //random event per 3 wins
+            { 
+                int randomnumber = rand() % 11;
                 if (randomnumber < 7){
                     item1(balance);
                     std::cout<< "you just got a common item, small pot of gold";
@@ -220,12 +226,8 @@ void level(std::vector<std::string> &symbolSet){
                     item3(balance);
                     std::cout<< "you just got an epic item, gold rain!";
                 }
-                    
-            if (winStreak < win)
-            {
-                winStreak++;
-                std::cout<< "current win streak: " << winStreak << std::endl;
             }
+
         }else {
             std::cout << sadMessages[rand() % sadMessages.size()] << "\n";
             std::cout << "No winning combination. Try again!\n";
@@ -328,8 +330,9 @@ void level(std::vector<std::string> &symbolSet){
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
         }
         loops++;
-    }}
+    }
 }
+
 int main() {
     srand(static_cast<unsigned int>(time(0)));
     std::cout<<"start";
@@ -373,3 +376,5 @@ int main() {
     std::this_thread::sleep_for(std::chrono::milliseconds(5000));
     return 0;
 }
+//swapped position of tax
+//added win streak bonus
