@@ -14,12 +14,12 @@ BetSystem betSystem(10); //debug: defining systems at start instead of in main
 DifficultySystem difficulty;
 std::map<std::vector<std::string>, int> payouts = {
     //full board type
-    {{"🍒", "🍒", "🍒"}, 30},
-    {{"🍋", "🍋", "🍋"}, 30},
-    {{"🍊", "🍊", "🍊"}, 50},
-    {{"🍑", "🍑", "🍑"}, 50},
-    {{"🔔", "🔔", "🔔"}, 80},
-    {{"🍫", "🍫", "🍫"}, 80},
+    {{"🍒", "🍒", "🍒"}, 100},
+    {{"🍋", "🍋", "🍋"}, 100},
+    {{"🍊", "🍊", "🍊"}, 150},
+    {{"🍑", "🍑", "🍑"}, 150},
+    {{"🔔", "🔔", "🔔"}, 180},
+    {{"🍫", "🍫", "🍫"}, 180},
     {{"7️⃣", "7️⃣", "7️⃣"}, 1000000}, // Jackpot 
     //proposed synergy 🍒+🔔, 🍋+🍊, 🍑+🍫 (basic+rare, basic+uncommon, uncommon+rare)
     //(Note 7️⃣ has no synergy, so when the player start upgrading 7️⃣, they would disrupt their other synergy)
