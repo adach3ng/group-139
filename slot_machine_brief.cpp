@@ -106,8 +106,10 @@ int win = 0; //win++ if user wins
 int balance = 200; // intitial balance (debug note: moved this ahead so balance is defined in level)
 float payoutModifier = 1.0f;
 float taxModifier = 1.0f;
+int luck = 0;
 void level(int &win, std::vector<std::string> &symbolSet){
     while (true) {
+        std::cout << luck;
         int p1 = rand() % 20;
         if (p1 <= loops-5 && p1 % 2 == 0) //rob the player with increasing probability that caps at 50%
         {
@@ -161,13 +163,40 @@ void level(int &win, std::vector<std::string> &symbolSet){
             std::this_thread::sleep_for(std::chrono::milliseconds(300-loops*2));
             }
         }
+        int baseWin = checkWinningCombination(reels);
+
+        //roll with advantage
+        int rerollProb = rand() % 20;
+        if (luck >= rerollProb) {
+            std::vector<std::string> rerollReels = spinReels(symbolSet);
+            std::cout << "rigged\n";
+            for (const auto& reel : reels) { //checking rigged reels
+                std::cout << reel << "| ";
+            }
+            for (const auto& rerollReels : rerollReels) { 
+                std::cout << rerollReels << "| ";
+            }
+            if (checkWinningCombination(rerollReels) > baseWin)
+            {
+                reels = rerollReels;
+                baseWin = checkWinningCombination(rerollReels);
+            }
+        }
+
+        //rig jackpot
+        std::vector<std::string> jackpot = {"7️⃣", "7️⃣", "7️⃣"};
+        if (reels == jackpot) {
+            std::vector<std::string> rerollReels = spinReels(symbolSet);
+            reels = rerollReels;
+            baseWin = checkWinningCombination(rerollReels);
+        }
+
         std::cout << std::endl;
-        for (const auto& reel : reels) {
+        for (const auto& reel : reels) { //output reels
             std::cout << reel << "| ";
         }
         std::cout << std::endl;
 
-        int baseWin = checkWinningCombination(reels);
         if (baseWin > 0) {
             int payout = static_cast<int>(betSystem.calculatePayout(baseWin) * payoutModifier);
             balance += payout;
@@ -176,7 +205,7 @@ void level(int &win, std::vector<std::string> &symbolSet){
                       << " × Additional Multiplier: " << payoutModifier 
                       << " → Total: $" << payout << "!\n";
             
-            if (baseWin == 1000000*win) {
+            if (baseWin >= 800000) {
                 std::cout << "💰 JACKPOT!!! MILLIONAIRE STATUS ACHIEVED! 💰\n";
                 win++;
                 std::cout << "Enter Yes/No to continue to second level";
@@ -207,11 +236,17 @@ void level(int &win, std::vector<std::string> &symbolSet){
             std::this_thread::sleep_for(std::chrono::milliseconds(100-loops));
             std::cout << i+1 << ": " << symbols[i] << std::endl;
         }
+
         //special upgrades
         std::this_thread::sleep_for(std::chrono::milliseconds(100-loops));
         std::cout << "8: 📈" << std::endl;
+        if (luck < 20)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100-loops));
+            std::cout << "9: 🍀" << std::endl;
+        }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100-loops));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100-loops)); //get player's choice of upgrade
         std::cout << "\nWhat is your choice?" << std::endl;
         int upgradeChoice;
         std::cin >> upgradeChoice;
@@ -253,11 +288,18 @@ void level(int &win, std::vector<std::string> &symbolSet){
             symbolSet.push_back(symbols[upgradeChoice-1]);
         }
 
-        else if (upgradeChoice == 8) //add one copy of jackpot
+        else if (upgradeChoice == 8) //increase payout multiplier
         {
             std::cout << "good investment" << std::endl;
             balance -= 20;
             payoutModifier += 0.05;
+        }
+
+        else if (upgradeChoice == 9 && luck < 20) //icrease luck for reroll chance
+        {
+            std::cout << "feeling lucky?" << std::endl;
+            balance -= 20;
+            luck += 1;
         }
 
         else
@@ -304,7 +346,7 @@ int main() {
 
     betSystem.showBetHelp();
     //while(chance!=0){
-    level(win, symbolSet); //debug: added symbolSet into level function
+    level(win, symbolSet);
     //}
     //if (chance == 0){
     std::cout << "Good game, your win streak was " << win;
