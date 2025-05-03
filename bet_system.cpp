@@ -16,9 +16,9 @@ bool BetSystem::placeBet(int& balance, int amount) {
 
     // Payout Ratio(Unlinear)
     if (amount <= 40) { //50
-        multiplier = 1.0f + ((amount - 10) / 60.0f); //100
+        multiplier = 1.0f + ((amount - 10) / 60.0f);
     } else if (amount <= 80) {
-        multiplier = 1.5f + ((amount - 40) / 80.0f); //((amount - 50) / 200.0f)
+        multiplier = 1.5f + ((amount - 40) / 80.0f);
     } else {
         multiplier = 2.0f;
     }
@@ -38,9 +38,9 @@ float BetSystem::getMultiplier() const {
 void BetSystem::showBetHelp() const {
     std::cout << "\n---Betting system description---\n"
               << "The betting amount affects the bonus multiplier ratio:\n"
-              << "10-40:  1.0x - 1.5x\n" //"10-50:  1.0x - 1.5x\n"
-              << "41-80: 1.5x - 2.0x\n" //"51-100: 1.5x - 2.0x\n"
-              << ">80:   2.0x\n" //">100:   2.0x\n"
+              << "10-40:  1.0x - 1.5x\n"
+              << "41-80: 1.5x - 2.0x\n"
+              << ">80:   2.0x\n"
               << "Each bet must not be less than the base amount " << baseBet << std::endl;
 }
 

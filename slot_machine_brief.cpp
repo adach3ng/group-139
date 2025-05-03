@@ -10,16 +10,16 @@
 #include "difficulty_system.h"
 
 std::vector<std::string> symbols = {"🍒", "🍋", "🍊", "🍑", "🔔", "🍫", "7️⃣"};  // Cherry, Lemon, Orange, Plum, Bell, Bar, Seven
-BetSystem betSystem(10); //debug: defining systems at start instead of in main
+BetSystem betSystem(10);
 DifficultySystem difficulty;
 std::map<std::vector<std::string>, int> payouts = {
     //full board type
-    {{"🍒", "🍒", "🍒"}, 100},
-    {{"🍋", "🍋", "🍋"}, 100},
-    {{"🍊", "🍊", "🍊"}, 150},
-    {{"🍑", "🍑", "🍑"}, 150},
-    {{"🔔", "🔔", "🔔"}, 180},
-    {{"🍫", "🍫", "🍫"}, 180},
+    {{"🍒", "🍒", "🍒"}, 30},
+    {{"🍋", "🍋", "🍋"}, 30},
+    {{"🍊", "🍊", "🍊"}, 50},
+    {{"🍑", "🍑", "🍑"}, 50},
+    {{"🔔", "🔔", "🔔"}, 80},
+    {{"🍫", "🍫", "🍫"}, 80},
     {{"7️⃣", "7️⃣", "7️⃣"}, 1000000}, // Jackpot 
     //proposed synergy 🍒+🔔, 🍋+🍊, 🍑+🍫 (basic+rare, basic+uncommon, uncommon+rare)
     //(Note 7️⃣ has no synergy, so when the player start upgrading 7️⃣, they would disrupt their other synergy)
@@ -46,32 +46,6 @@ std::map<std::vector<std::string>, int> payouts = {
     {{"🍑", "🍑", "🍫"}, 70},
       
 };
-/*{{"🍒", "🍒", "🍒"}, 10}, og values
-    {{"🍋", "🍋", "🍋"}, 5},
-    {{"🍊", "🍊", "🍊"}, 4},
-    {{"🍑", "🍑", "🍑"}, 3},
-    {{"🔔", "🔔", "🔔"}, 20},
-    {{"🍫", "🍫", "🍫"}, 50},
-    {{"🍒", "🍒", "🍋"}, 2},
-    {{"🍋", "🍋", "🍊"}, 2},
-    {{"🍊", "🍊", "🍑"}, 2},
-    {{"🍑", "🍑", "🔔"}, 2},
-    {{"🔔", "🔔", "🍫"}, 10},
-    {{"🍒", "🍒", "🍊"}, 2},
-    // Additional combinations for easier wins
-    {{"🍒", "🍋", "🍒"}, 2},
-    {{"🍒", "🍊", "🍒"}, 2},
-    {{"🍋", "🍒", "🍋"}, 2},
-    {{"🍋", "🍑", "🍋"}, 2},
-    {{"🍊", "🍒", "🍊"}, 2},
-    {{"🍊", "🔔", "🍊"}, 2},
-    {{"🍑", "🍒", "🍑"}, 2},
-    {{"🍑", "🍫", "🍑"}, 2},
-    {{"🔔", "🍒", "🔔"}, 5},
-    {{"🔔", "🍋", "🔔"}, 5},
-    {{"🍫", "🍒", "🍫"}, 10},
-    {{"🍫", "🍋", "🍫"}, 10},
-    {{"7️⃣", "7️⃣", "7️⃣"}, 1000000}  // Jackpot */
 
 std::vector<std::string> spinReels(const std::vector<std::string>& symbolSet) {
     std::vector<std::string> reels;
@@ -103,8 +77,7 @@ std::vector<std::string> sadMessages = {
 int loops = 1; //loop++ per slot machine spin
 int win = 0; //win++ if user wins
 int winStreak = 0;
-//int chance = 1; // chance = 0 then gg
-int balance = 200; // intitial balance (debug note: moved this ahead so balance is defined in level)
+int balance = 200; // intitial balance
 float payoutModifier = 1.0f;
 float taxModifier = 1.0f;
 int luck = 110;
@@ -117,7 +90,6 @@ void level(std::vector<std::string> &symbolSet){
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
             std::cout << "\n ⚠️ Insufficient funds for minimum bet. Game Over! ⚠️\n";
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
-            //chance = 0;
             break;
         }
 
@@ -135,7 +107,6 @@ void level(std::vector<std::string> &symbolSet){
         if (amount == 0) {
             std::cout << "Cash out with $" << balance << ". Goodbye!\n";
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
-            //chance = 0;
             break;
         }
 
@@ -303,7 +274,7 @@ void level(std::vector<std::string> &symbolSet){
             payoutModifier += 0.05;
         }
 
-        else if (upgradeChoice == 9) //icrease luck for reroll chance
+        else if (upgradeChoice == 9) //increase luck for reroll chance
         {
             std::cout << "feeling lucky?" << std::endl;
             balance -= 20;
@@ -315,7 +286,7 @@ void level(std::vector<std::string> &symbolSet){
             std::cout << "you leave the upgrade shop" << std::endl;
         }
 
-        if (loops == 5)
+        if (loops == 5) //remove beginner's luck after 5 rolls
         {
             luck -= 100;
         }
@@ -371,12 +342,8 @@ int main() {
     std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(2000*timerMult)));
 
     betSystem.showBetHelp();
-    //while(chance!=0){
     level(symbolSet);
-    //}
-    //if (chance == 0){
     std::cout << "Good game, your win streak was " << winStreak;
-    //}
     std::this_thread::sleep_for(std::chrono::milliseconds(5000));
     return 0;
 }
